@@ -1,0 +1,35 @@
+{
+  "name": "node-api-template",
+  "version": "1.0.0",
+  "description": "Node API Template",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon ./src/app.js",
+    "test": "mocha",
+    "lint": "eslint ."
+  },
+  "author": "Tyler Petresky <hello@tylerpetresky.com>",
+  "licensfe": "MIT",
+  "dependencies": {
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "bluebird": "^3.4.7",
+    "body-parser": "^1.16.0",
+    "ejs": "^2.5.5",
+    "express": "^4.14.0",
+    "jquery": "^3.1.1",
+    "lodash": "^4.17.4",
+    "passport": "^0.3.2",
+    "standard": "^8.6.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.14.0",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "mocha": "^3.2.0",
+    "nodemon": "^1.11.0"
+  }
+}
