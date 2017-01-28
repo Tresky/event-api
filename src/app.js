@@ -1,8 +1,13 @@
 const express = require('express')
+const session = require('express-session')
+const PgSession = require('connect-pg-simple')(session)
 const path = require('path')
 const http = require('http')
 const bodyParser = require('body-parser')
 const passport = require('passport')
+
+const secrets = require('../config/secrets')
+const passportConf = require('../config/passport')
 
 // Create the Express server
 const app = express()
@@ -17,11 +22,25 @@ app.set('view engine', 'html')
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(session({
+  store: new PgSession({
+    conString: secrets.postgres,
+    tableName: secrets.sessionTable
+  }),
+  secret: secrets.sessionSecret,
+  saveUninitialized: true,
+  resave: false,
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    httpOnly: true,
+    secure: true // only when on HTTPS
+  }
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 
 // Test route
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.render('index')
 })
 
@@ -29,7 +48,7 @@ app.get('/', function (req, res) {
 // ...
 
 // Catch any 403 errors and render the 403 page.
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err.status === 403) {
     res.render('403')
   } else {
@@ -40,12 +59,12 @@ app.use(function (err, req, res, next) {
 // Catch any 404 errors and render the 404 page.
 // Note: This must be below all other routes because
 // of the way that Express handles routing.
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.status(404).render('404')
 })
 
 // Start the Express server
 http.createServer(app)
-  .listen(app.get('port'), function () {
+  .listen(app.get('port'), () => {
     console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'))
   })
