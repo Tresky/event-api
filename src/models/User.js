@@ -139,10 +139,6 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    membershipId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     logins: {
       type: DataTypes.INTEGER,
       allowNull: false,
