@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon ./src/app.js",
-    "test": "mocha",
+    "test": "mocha --recursive",
     "lint": "eslint ."
   },
   "author": "Tyler Petresky <hello@tylerpetresky.com>",
