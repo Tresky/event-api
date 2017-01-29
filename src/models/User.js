@@ -153,7 +153,9 @@ module.exports = (db, DataTypes) => {
     instanceMethods: instanceMethods,
     classMethods: classMethods,
     hooks: hooks
-  }).sync()
+  })
+
+  User.sync()
 
   return User
 }
