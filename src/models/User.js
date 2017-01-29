@@ -4,6 +4,10 @@ const crypto = require('crypto')
 module.exports = (db, DataTypes) => {
   let classMethods = {
     associate (models) {
+      User.belongsToMany(models.Rso, {
+        through: models.Membership,
+        foreignKey: 'userId'
+      })
       // User.hasOne(models.University)
       // User.hasMany(models.Membership)
     },
@@ -141,13 +145,14 @@ module.exports = (db, DataTypes) => {
     },
     logins: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      default: 0
+      defaultValue: 0
     },
     resetPasswordExpires: DataTypes.DATE,
     resetPasswordToken: DataTypes.STRING,
-    createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+    universityId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   }, {
     tableName: 'Users',
     instanceMethods: instanceMethods,
