@@ -57,15 +57,6 @@ app.route('/api/login')
 // Handle general API errors
 app.use(ApiError.handleError)
 
-// Catch any 403 errors and render the 403 page.
-app.use((err, req, res, next) => {
-  if (err.status === 403) {
-    res.render('403')
-  } else {
-    next()
-  }
-})
-
 // Catch any 404 errors and render the 404 page.
 // Note: This must be below all other routes because
 // of the way that Express handles routing.
