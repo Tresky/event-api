@@ -104,26 +104,29 @@ module.exports = (db, DataTypes) => {
     }
   }
 
-  let hooks = {
-    /**
-     * Runs everytime a user is saved. If the password
-     * has been changed, encrypt the new password before
-     * you commit it to the database.
-     */
-    beforeSave (user, options, fn) {
-      if (user.changed('email')) {
-        user.email = user.email.toLowerCase()
-      }
-
-      if (user.changed('password')) {
-        this.encryptPassword(user.password, (hash, err) => {
-          user.password = hash
-          fn(null, user)
-        })
-        return
-      }
-      fn(null, user)
+  /**
+   * Runs everytime a user is saved. If the password
+   * has been changed, encrypt the new password before
+   * you commit it to the database.
+   */
+  let beforeSaveHook = (user, options, fn) => {
+    if (user.changed('email')) {
+      user.email = user.email.toLowerCase()
     }
+
+    if (user.changed('password')) {
+      User.encryptPassword(user.password, (hash, err) => {
+        user.password = hash
+        fn(null, user)
+      })
+      return
+    }
+    fn(null, user)
+  }
+
+  let hooks = {
+    beforeUpdate: beforeSaveHook,
+    beforeCreate: beforeSaveHook
   }
 
   let User = db.define('User', {
