@@ -53,6 +53,8 @@ let loginController = require('./controllers/loginController.js')
 // Define API routes
 app.route('/api/login')
   .post(loginController.postLogin)
+app.route('/api/signup')
+  .post(loginController.postSignup)
 
 // Handle general API errors
 app.use(ApiError.handleError)

@@ -67,9 +67,15 @@ module.exports.FailedToLogin = class extends ApiError {
   }
 }
 
-module.exports.FailedToCreateUser = class extends ApiError {
+module.exports.FailedToSignup = class extends ApiError {
   constructor (raw) {
-    super('Creation of a new user record failed', 201, 500, raw)
+    super('Creation of a new user record failed', 201, 400, raw)
+  }
+}
+
+module.exports.UserExistsWithEmail = class extends ApiError {
+  constructor (raw) {
+    super('User with given email already exists', 202, 400, raw)
   }
 }
 

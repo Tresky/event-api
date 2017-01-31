@@ -1,15 +1,19 @@
-const bcrypt = require('bcrypt-nodejs')
-const crypto = require('crypto')
+let bcrypt = require('bcrypt-nodejs')
+let crypto = require('crypto')
+
+let ApiError = require('../lib/apiErrors')
 
 module.exports = (db, DataTypes) => {
+  /*******************
+   * CLASS FUNCTIONS *
+   *******************/
+
   let classMethods = {
     associate (models) {
       User.belongsToMany(models.Rso, {
         through: models.Membership,
         foreignKey: 'userId'
       })
-      // User.hasOne(models.University)
-      // User.hasMany(models.Membership)
     },
 
     /**
@@ -68,8 +72,40 @@ module.exports = (db, DataTypes) => {
       .catch((serr) => {
         cb(serr, null)
       })
+    },
+
+    /**
+     * Creates a new user record using the given
+     * data that is passed in.
+     * @param {Object}   data Data to create the user with
+     * @param {Function} cb   Callback function
+     */
+    createUser (data, cb) {
+      // Check if user exists, first
+      userExists(data.email)
+        .then((exists) => {
+          if (exists) {
+            // The email already exists, so we throw
+            // an exception.
+            cb(new ApiError.UserExistsWithEmail(data), null)
+          } else {
+            let newUser = User.build(data)
+
+            // Potential to set values in future
+            // ...
+
+            newUser.save()
+              .then(() => {
+                cb(null, newUser)
+              })
+          }
+        })
     }
   }
+
+  /**********************
+   * INSTANCE FUNCTIONS *
+   **********************/
 
   let instanceMethods = {
     /**
@@ -164,6 +200,26 @@ module.exports = (db, DataTypes) => {
   })
 
   User.sync()
+
+  /*******************
+   * LOCAL FUNCTIONS *
+   *******************/
+
+  /**
+   * Check to see is a user with the given email
+   * already exists or not.
+   * @param  {String} email Email to check for in the DB
+   * @return {Boolean}      True if email exists; false otherwise
+   */
+  let userExists = (email) => {
+    return User.count({ where: { email: email } })
+      .then((count) => {
+        if (count > 0) {
+          return true
+        }
+        return false
+      })
+  }
 
   return User
 }
