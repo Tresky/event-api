@@ -20,7 +20,7 @@ describe ('Login Controller', () => {
         db.User.create({
           email: 'tnpetresky+0@gmail.com',
           password: 'password',
-          universityId: 0
+          universityId: 1
         }).then(function (user) {
           testUser = user
         }).catch(function (err) {
@@ -87,7 +87,7 @@ describe ('Login Controller', () => {
         db.User.create({
           email: 'tnpetresky+0@gmail.com',
           password: 'password',
-          universityId: 0
+          universityId: 1
         }).then(function (user) {
           testUser0 = user
         }).catch(function (err) {
@@ -104,7 +104,7 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+1@gmail.com',
         password: 'password',
-        universityId: 0
+        universityId: 1
       }
 
       chai.request(app)
@@ -126,7 +126,7 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+0@gmail.com',
         password: 'password',
-        universityId: 0
+        universityId: 1
       }
 
       chai.request(app)

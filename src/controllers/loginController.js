@@ -2,11 +2,12 @@ let passport = require('passport')
 
 let db = require('../db')
 let ApiError = require('../lib/apiErrors')
-let $ = require('../lib/controllerHelpers')
+let helpers = require('../lib/controllerHelpers')
 
 exports.postLogin = (req, res, next) => {
-  // req.assert('email', 'Email is not valid').isEmail()
-  // req.assert('password', 'Password cannot be blank').notEmpty()
+  req.assert('email', 'required').notEmpty()
+  req.assert('email', 'valid email required').isEmail()
+  req.assert('password', 'password cannot be empty').notEmpty()
 
   let errors = req.validationErrors()
   if (errors) {
@@ -27,7 +28,17 @@ exports.postLogin = (req, res, next) => {
         user: user
       })
     })
-  })(req, res, next)
+  })(req, res, next) // <-----
+  // HTTP request, like this POST request (postLogin()) are
+  // handled in Express middleware. This means that all HTTP
+  // requests are intercepted by Express and passed from
+  // middleware function to middleware function until it the
+  // request finds a function that will handle it. This is
+  // essentially allowing the function to pass requests onward
+  // in the event that they can't be handled by passport or
+  // that they need to continue through after passport has
+  // handled them. This is actually a bit complicated, but
+  // hopefully this helps a bit. :)
 }
 
 exports.logout = (req, res) => {
@@ -36,7 +47,7 @@ exports.logout = (req, res) => {
 }
 
 exports.postSignup = (req, res, next) => {
-  let params = $.requireParams([
+  let params = helpers.requireParams([
     'email',
     'password',
     'universityId'

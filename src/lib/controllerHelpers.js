@@ -1,5 +1,5 @@
-const _ = require('lodash')
-const ApiErrors = require('./apiErrors')
+let _ = require('lodash')
+let ApiErrors = require('./apiErrors')
 
 module.exports = {
   /**

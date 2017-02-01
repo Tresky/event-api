@@ -43,11 +43,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Test route
-app.get('/', (req, res) => {
-  res.render('index')
-})
-
+// Import controllers
 let loginController = require('./controllers/loginController.js')
 
 // Define API routes

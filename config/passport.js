@@ -45,6 +45,7 @@ exports.isAuthorized = (req, res, next) => {
   if (req.user.tokens[provider]) {
     next()
   } else {
+    // TODO
     console.log('Not authorized')
   }
 }
