@@ -1,7 +1,7 @@
 let bcrypt = require('bcrypt-nodejs')
 let crypto = require('crypto')
 
-let ApiError = require('../lib/apiErrors')
+let ApiErrors = require('../lib/apiErrors')
 
 module.exports = (db, DataTypes) => {
   /*******************
@@ -87,7 +87,7 @@ module.exports = (db, DataTypes) => {
           if (exists) {
             // The email already exists, so we throw
             // an exception.
-            cb(new ApiError.UserExistsWithEmail(data), null)
+            cb(new ApiErrors.UserExistsWithEmail(data), null)
           } else {
             let newUser = User.build(data)
 
@@ -95,8 +95,11 @@ module.exports = (db, DataTypes) => {
             // ...
 
             newUser.save()
-              .then(() => {
-                cb(null, newUser)
+              .then((res) => {
+                cb(null, res)
+              })
+              .catch((err) => {
+                cb(new ApiErrors.FailedToCreateUser(err), null)
               })
           }
         })
