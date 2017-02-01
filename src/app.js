@@ -1,16 +1,19 @@
-const express = require('express')
-const session = require('express-session')
-const PgSession = require('connect-pg-simple')(session)
-const path = require('path')
-const http = require('http')
-const bodyParser = require('body-parser')
-const passport = require('passport')
+let express = require('express')
+let session = require('express-session')
+let PgSession = require('connect-pg-simple')(session)
+let path = require('path')
+let http = require('http')
+let bodyParser = require('body-parser')
+let passport = require('passport')
+let expressValidator = require('express-validator')
 
-const secrets = require('../config/secrets')
-const passportConf = require('../config/passport')
+let ApiError = require('./lib/apiErrors')
+
+let secrets = require('../config/secrets')
+let passportConf = require('../config/passport')
 
 // Create the Express server
-const app = express()
+let app = express()
 
 // Configure the Express server
 app.engine('html', require('ejs').renderFile)
@@ -22,6 +25,7 @@ app.set('view engine', 'html')
 app.use(express.static(path.join(__dirname, '/public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(expressValidator())
 app.use(session({
   store: new PgSession({
     conString: secrets.postgres,
@@ -39,22 +43,17 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Test route
-app.get('/', (req, res) => {
-  res.render('index')
-})
+// Import controllers
+let loginController = require('./controllers/loginController.js')
 
 // Define API routes
-// ...
+app.route('/api/login')
+  .post(loginController.postLogin)
+app.route('/api/signup')
+  .post(loginController.postSignup)
 
-// Catch any 403 errors and render the 403 page.
-app.use((err, req, res, next) => {
-  if (err.status === 403) {
-    res.render('403')
-  } else {
-    next()
-  }
-})
+// Handle general API errors
+app.use(ApiError.handleError)
 
 // Catch any 404 errors and render the 404 page.
 // Note: This must be below all other routes because
@@ -68,3 +67,5 @@ http.createServer(app)
   .listen(app.get('port'), () => {
     console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'))
   })
+
+module.exports = app

@@ -45,6 +45,7 @@ exports.isAuthorized = (req, res, next) => {
   if (req.user.tokens[provider]) {
     next()
   } else {
-    res.redirect('/auth/' + provider)
+    // TODO
+    console.log('Not authorized')
   }
 }
