@@ -6,7 +6,10 @@ const config = require('../config/secrets')
 
 let db = {}
 
-let sequelize = new Sequelize(config.postgres)
+let sequelize = new Sequelize(config.postgres.database,
+                              config.postgres.username,
+                              config.postgres.password,
+                              config.postgres.config)
 let modelsDir = path.join(__dirname, 'models')
 
 // Import all of the models from the /models directory

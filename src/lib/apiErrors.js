@@ -136,8 +136,10 @@ module.exports.handleError = (err, req, res, next) => {
   }
 
   // Print the error information
-  err.print()
-  err.printRaw()
+  if (!process.env.API_ERRORS_OFF) {
+    err.print()
+    err.printRaw()
+  }
 
   // Set the status and send the generated error body
   // back to the front-end.
