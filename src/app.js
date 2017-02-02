@@ -45,12 +45,18 @@ app.use(passport.session())
 
 // Import controllers
 let loginController = require('./controllers/loginController.js')
+let universityController = require('./controllers/universityController.js')
 
 // Define API routes
 app.route('/api/login')
   .post(loginController.postLogin)
 app.route('/api/signup')
   .post(loginController.postSignup)
+app.route('/api/university')
+  .post(universityController.create)
+app.route('/api/university/:id')
+  .get(universityController.show)
+  .delete(universityController.destroy)
 
 // Handle general API errors
 app.use(ApiError.handleError)
