@@ -1,3 +1,5 @@
+let colors = require('colors')
+
 /**
  * File: apiErrors.js
  * Author: Tyler Petresky
@@ -23,7 +25,7 @@ class ApiError {
    * Print the error information
    */
   print () {
-    console.log(`ApiError #${this.code} [${this.status}]: ${(this.code === 1) ? this.raw : this.message}`)
+    console.log(colors.error(`ApiError #${this.code} [${this.status}]:`), `${(this.code === 1) ? this.raw : this.message}`)
   }
 
   /**
