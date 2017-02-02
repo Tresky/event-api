@@ -46,7 +46,6 @@ describe('User model', function () {
     )
 
     Promise.all(promises).then(function (asd) {
-      console.log('All done')
       done()
     })
   })
