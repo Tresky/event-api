@@ -82,6 +82,33 @@ module.exports.UserExistsWithEmail = class extends ApiError {
 }
 
 /**
+ * UniversityController Errors
+ */
+exports.UniversityRecordNotFound = class extends ApiError {
+  constructor (raw) {
+    super('University record with given ID was not found', 300, 400, raw)
+  }
+}
+
+exports.UniversityExistsWithName = class extends ApiError {
+  constructor (raw) {
+    super('University with the given name already exists', 301, 400, raw)
+  }
+}
+
+exports.InvalidUserCreatingUniversity = class extends ApiError {
+  constructor (raw) {
+    super('University must be created by a valid user', 302, 400, raw)
+  }
+}
+
+exports.FailedToCreateUniversity = class extends ApiError {
+  constructor (raw) {
+    super('Failed to create university record', 303, 400, raw)
+  }
+}
+
+/**
  * Generates the `body` of an error based
  * on the ApiError object specified.
  * @param  {Object} err ApiError object to generate body of
@@ -111,8 +138,10 @@ module.exports.handleError = (err, req, res, next) => {
   }
 
   // Print the error information
-  err.print()
-  err.printRaw()
+  if (!process.env.API_ERRORS_OFF) {
+    err.print()
+    err.printRaw()
+  }
 
   // Set the status and send the generated error body
   // back to the front-end.

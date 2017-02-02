@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon ./src/app.js",
-    "test": "mocha --recursive",
+    "test": "PG_OUTPUT_OFF=true API_ERRORS_OFF=true mocha --recursive",
     "lint": "eslint ."
   },
   "author": "Tyler Petresky <hello@tylerpetresky.com>",

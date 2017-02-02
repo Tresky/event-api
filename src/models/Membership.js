@@ -1,4 +1,3 @@
-console.log('Defining Member')
 module.exports = (db, DataTypes) => {
   let classMethods = {}
 
