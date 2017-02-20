@@ -1,11 +1,13 @@
 let mocha = require('mocha')
 let chai = require('chai')
 let chaiHttp = require('chai-http')
+let jwt = require('jwt-simple')
 let _ = require('lodash')
 
 let app = require('../../src/app.js')
 let Sequelize = require('sequelize')
 let db = require('../../src/db.js')
+let config = require('../../config/secrets')
 
 let should = chai.should
 let expect = chai.expect
@@ -40,12 +42,11 @@ describe ('Login Controller', () => {
       }
 
       chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send(payload)
         .end((err, res) => {
           expect(res).to.have.status(200)
-          expect(res.body.state).to.be.eql(true)
-          expect(res.body.user.id).to.be.eql(testUser.id)
+          expect(res.body.token).to.exist
           done()
         })
     })
@@ -57,7 +58,7 @@ describe ('Login Controller', () => {
       }
 
       chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send(payload)
         .end((err, res) => {
           expect(res).to.have.status(401)
@@ -75,7 +76,7 @@ describe ('Login Controller', () => {
       Promise.all(promises).then(() => {
         done()
       })
-    });
+    })
   })
 
   describe ('loginController#postSignup', () => {
@@ -108,11 +109,11 @@ describe ('Login Controller', () => {
       }
 
       chai.request(app)
-        .post('/api/signup')
+        .post('/api/auth/signup')
         .send(payload)
         .end((err, res) => {
           expect(res).to.have.status(200)
-          expect(res.body.state).to.be.eql(true)
+          expect(res.body.token).to.exist
           expect(res.body.user.email).to.be.eql(payload.email)
           expect(res.body.user.universityId).to.be.eql(payload.universityId)
 
@@ -130,7 +131,7 @@ describe ('Login Controller', () => {
       }
 
       chai.request(app)
-        .post('/api/signup')
+        .post('/api/auth/signup')
         .send(payload)
         .end((err, res) => {
           expect(res).to.have.status(400)
@@ -149,6 +150,6 @@ describe ('Login Controller', () => {
       Promise.all(promises).then(() => {
         done()
       })
-    });
+    })
   })
 })

@@ -48,9 +48,9 @@ let loginController = require('./controllers/loginController.js')
 let universityController = require('./controllers/universityController.js')
 
 // Define API routes
-app.route('/api/login')
+app.route('/api/auth/login')
   .post(loginController.postLogin)
-app.route('/api/signup')
+app.route('/api/auth/signup')
   .post(loginController.postSignup)
 app.route('/api/university')
   .post(universityController.create)
