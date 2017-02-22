@@ -109,6 +109,33 @@ exports.FailedToCreateUniversity = class extends ApiError {
 }
 
 /**
+ * MembershipController Errors
+ */
+exports.AlreadyHaveActiveUniversityMembership = class extends ApiError {
+  constructor (raw) {
+    super('Cannot have more than one active university-level membership', 400, 400, raw)
+  }
+}
+
+exports.InvalidRsoPermissionLevel = class extends ApiError {
+  constructor (raw) {
+    super('Rso memberships cannot be SUPERADMIN', 401, 400, raw)
+  }
+}
+
+exports.InvalidUniversityPermissionLevel = class extends ApiError {
+  constructor (raw) {
+    super('University memberships cannot be ADMIN', 402, 400, raw)
+  }
+}
+
+exports.FailedToCreateMembership = class extends ApiError {
+  constructor (raw) {
+    super('Failed to create a membership record', 403, 400, raw)
+  }
+}
+
+/**
  * Generates the `body` of an error based
  * on the ApiError object specified.
  * @param  {Object} err ApiError object to generate body of
