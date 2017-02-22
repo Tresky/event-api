@@ -65,14 +65,13 @@ export default class UserPermissionsProxy {
     })
   }
 
-  userCan (permission) {
-    if (!permission) {
-      return new ApiErrors.RequiredParametersMissing()
-    }
-
-    return _.has(this.permission)
-  }
-
+  /**
+   * Returns a boolean representing is a user has
+   * or does not have a specified permission.
+   * @param {string}  permission Permission string to check for
+   * @param {integer} rsoId      ID of the RSO to check within
+   * @return {boolean}           True is has permission, false otherwise
+   */
   userCanInRso (permission, rsoId) {
     if (!permission || !rsoId) {
       return new ApiErrors.RequiredParametersMissing()
