@@ -1,6 +1,7 @@
 let passport = require('passport')
 let moment = require('moment')
 let jwt = require('jwt-simple')
+let _ = require('lodash')
 
 let db = require('../db')
 let config = require('../../config/secrets')
@@ -63,7 +64,8 @@ class LoginController extends ApiController {
     let params = helpers.requireParams([
       'email',
       'password',
-      'universityId'
+      'universityId',
+      'permissionLevel'
     ], req.body)
 
     let errors = req.validationErrors()
@@ -71,24 +73,54 @@ class LoginController extends ApiController {
       return next(new ApiError.FailedToSignup(errors))
     }
 
+    let userPayload = _.pick(params, ['email', 'password'])
+
     // Create the new user
-    db.User.createUser(params, (err, user) => {
+    // Typically, we would use a transaction here, but
+    // because of how the User#createUser() function is being
+    // used, we cannot. So, we have to do manual cleanup.
+    db.User.createUser(userPayload, (err, user) => {
       if (err) {
         // User#createUser is a custom class function, so
         // the errors that come from it are already ApiErrors.
         return next(err)
       }
 
-      // If the user gets created successfully,
-      // go ahead and sign them in.
-      req.logIn(user, (loginErr) => {
-        if (loginErr) {
-          return next(new ApiError.FailedToLogin(loginErr))
-        }
+      // Typically, to add a membership, you should
+      // use the built in method, addRso(), but in this
+      // case, we are adding a membership with no RSO,
+      // so the implementation is custom.
+      let membParams = {
+        userId: user.id,
+        universityId: params.universityId,
+        rsoId: null,
+        permissionLevel: params.permissionLevel
+      }
 
-        // Return the user record
-        res.json({ token: generateJwt(user), user: user })
-      })
+      // Create a membership for the user to be a part of
+      // a university.
+      db.Membership.create(membParams)
+        .then((memb) => {
+          console.log('Membership', memb)
+
+          // If the user gets created successfully,
+          // go ahead and sign them in.
+          req.logIn(user, (loginErr) => {
+            if (loginErr) {
+              return next(new ApiError.FailedToLogin(loginErr))
+            }
+
+            // Return the user record
+            res.json({ token: generateJwt(user), user: user })
+          })
+        }, (response) => {
+          // Roll back the creation of the User if creating
+          // the Membership failed.
+          db.User.destroy({ where: { id: user.id } })
+            .then(() => {
+              return next(response)
+            })
+        })
     })
   }
 }

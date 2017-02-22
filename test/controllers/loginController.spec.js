@@ -103,9 +103,10 @@ describe ('Login Controller', () => {
 
     it ('successfully signs up a new user', (done) => {
       let payload = {
-        email: 'tnpetresky+1@gmail.com',
+        email: 'tnpetresky+test@gmail.com',
         password: 'password',
-        universityId: 1
+        universityId: 1,
+        permissionLevel: 1
       }
 
       chai.request(app)
@@ -115,11 +116,20 @@ describe ('Login Controller', () => {
           expect(res).to.have.status(200)
           expect(res.body.token).to.exist
           expect(res.body.user.email).to.be.eql(payload.email)
-          expect(res.body.user.universityId).to.be.eql(payload.universityId)
 
           testUser1 = res.body.user
 
-          done()
+          db.Membership.count({
+            where: {
+              userId: res.body.user.id,
+              universityId: payload.universityId,
+              rsoId: null,
+              active: true
+            }
+          }).then((count) => {
+            expect(count).to.be.eql(1)
+            done()
+          })
         })
     })
 
@@ -127,7 +137,8 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+0@gmail.com',
         password: 'password',
-        universityId: 1
+        universityId: 1,
+        permissionLevel: 1
       }
 
       chai.request(app)
@@ -136,6 +147,24 @@ describe ('Login Controller', () => {
         .end((err, res) => {
           expect(res).to.have.status(400)
           expect(res.body.errorCode).to.be.eql(202)
+          done()
+        })
+    })
+
+    it ('does not allow users to signup as an ADMIN in a university', (done) => {
+      let payload = {
+        email: 'tnpetresky+1@gmail.com',
+        password: 'password',
+        universityId: 1,
+        permissionLevel: 2
+      }
+
+      chai.request(app)
+        .post('/api/auth/signup')
+        .send(payload)
+        .end((err, res) => {
+          expect(res).to.have.status(400)
+          expect(res.body.errorCode).to.be.eql(402)
           done()
         })
     })
