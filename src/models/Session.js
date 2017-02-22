@@ -18,7 +18,9 @@ module.exports = (db, DataTypes) => {
   }, {
     tableName: config.sessionTable,
     timestamps: false
-  }).sync()
+  })
+
+  Session.sync()
 
   return Session
 }

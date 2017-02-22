@@ -19,6 +19,10 @@ module.exports = (db, DataTypes) => {
     rsoId: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    universityId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     tableName: 'Membership',

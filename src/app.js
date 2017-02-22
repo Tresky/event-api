@@ -33,15 +33,22 @@ app.use(session({
   }),
   secret: secrets.sessionSecret,
   saveUninitialized: true,
-  resave: false,
-  cookie: {
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    httpOnly: true,
-    secure: true // only when on HTTPS
-  }
+  resave: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+
+/**
+ * Custom middleware that will instantiate a custom permissions
+ * proxy into the request object should a user be logged in.
+ */
+import UserPermissionsProxy from './lib/userPermissionsProxy.js'
+app.use((req, res, next) => {
+  if (req.isAuthenticated()) {
+    req.permissions = new UserPermissionsProxy(req.user)
+  }
+  next()
+})
 
 // Import controllers
 let loginController = require('./controllers/loginController.js')
