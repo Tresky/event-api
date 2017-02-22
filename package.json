@@ -38,6 +38,7 @@
     "standard": "^8.6.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "colors": "^1.1.2",
