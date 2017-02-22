@@ -58,10 +58,6 @@ module.exports = (db, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
-    created_by_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: false
