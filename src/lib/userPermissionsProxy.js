@@ -1,13 +1,9 @@
 let _ = require('lodash')
 
-let ApiErrors = require('./apiErrors')
+let ApiErrors = require('./apiErrors.js')
 let db = require('../db')
 
-let permLevels = {
-  SUPERADMIN: 1,
-  ADMIN: 2,
-  STUDENT: 3
-}
+import permLevels from './permissionLevels'
 
 let permissions = {
   SUPERADMIN: [
@@ -46,8 +42,11 @@ export default class UserPermissionsProxy {
     this.user = user
     this.memberships = []
     this.permissionsByRso = {}
+    this.permissionsByUniversity = {}
     this.superAdmin = null
 
+    // Find all memberships that a user has within various RSO's.
+    // If a user has a super
     db.Membership.findAll({
       where: {
         userId: this.user.id
@@ -57,20 +56,21 @@ export default class UserPermissionsProxy {
 
       _.each(this.memberships, (memb) => {
         if (_.isNull(memb.rsoId)) {
-          this.superAdmin = memb.universityId
+          this.permissionsByUniversity[memb.universityId] = concatPerms(memb.permissionLevel)
         } else {
           this.permissionsByRso[memb.rsoId] = concatPerms(memb.permissionLevel)
         }
       })
+      console.log('UserPermissionsProxy Instantiated', this.permissionsByRso, this.permissionsByUniversity)
     })
   }
 
   /**
    * Returns a boolean representing is a user has
-   * or does not have a specified permission.
+   * or does not have a specified permission within an RSO.
    * @param {string}  permission Permission string to check for
    * @param {integer} rsoId      ID of the RSO to check within
-   * @return {boolean}           True is has permission, false otherwise
+   * @return {boolean}           True if has permission, false otherwise
    */
   userCanInRso (permission, rsoId) {
     if (!permission || !rsoId) {
