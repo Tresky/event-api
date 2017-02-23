@@ -38,7 +38,8 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Add headers
+// Allow for CORS requests to be made to the server. This allows
+// requests to come in from any IP address.
 app.use((req, res, next) => {
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -50,6 +51,9 @@ app.use((req, res, next) => {
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true)
 
+  // Chrome sends special OPTIONS requests before sending a real
+  // HTTP request. If we encounter one of these, intercept it and
+  // simply return an okay status.
   if (req.method === 'OPTIONS') {
     res.send(200)
   } else {
