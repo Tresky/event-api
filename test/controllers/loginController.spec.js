@@ -82,6 +82,8 @@ describe ('Login Controller', () => {
   describe ('loginController#postSignup', () => {
     let testUser0 = null
     let testUser1 = null
+    let testUser2 = null
+    let testUni0 = null
 
     beforeEach((done) => {
       let promises = _.concat([],
@@ -133,6 +135,50 @@ describe ('Login Controller', () => {
         })
     })
 
+    it ('successfully signs up a new user and creates a new university', (done) => {
+      let payload = {
+        email: 'tnpetresky+test@gmail.com',
+        password: 'password',
+        permissionLevel: 1,
+        universityName: 'Test University',
+        description: 'My new uni'
+      }
+
+      chai.request(app)
+        .post('/api/auth/signup')
+        .send(payload)
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body.token).to.exist
+          expect(res.body.user.email).to.be.eql(payload.email)
+
+          testUser1 = res.body.user
+
+          db.University.find({
+            where: {
+              name: payload.universityName
+            }
+          }).then((uni) => {
+            expect(uni).to.not.be.null
+
+            testUni0 = uni
+
+            db.Membership.count({
+              where: {
+                userId: res.body.user.id,
+                universityId: uni.id,
+                rsoId: null,
+                active: true
+              }
+            }).then((count) => {
+              expect(count).to.be.eql(1)
+              done()
+            })
+          })
+
+        })
+    })
+
     it ('prohibits users from duplicating emails', (done) => {
       let payload = {
         email: 'tnpetresky+0@gmail.com',
@@ -153,7 +199,7 @@ describe ('Login Controller', () => {
 
     it ('does not allow users to signup as an ADMIN in a university', (done) => {
       let payload = {
-        email: 'tnpetresky+1@gmail.com',
+        email: 'tnpetresky+test@gmail.com',
         password: 'password',
         universityId: 1,
         permissionLevel: 2
@@ -173,8 +219,17 @@ describe ('Login Controller', () => {
     afterEach((done) => {
       let promises = _.concat([],
         db.User.destroy({ where: { id: testUser0.id } }),
-        db.User.destroy({ where: { id: testUser1.id } })
       )
+      if (testUser1) {
+        promises = _.concat(promises,
+          db.User.destroy({ where: { id: testUser1.id } })
+        )
+      }
+      if (testUni0) {
+        promises = _.concat(promises,
+          db.University.destroy({ where: { id: testUni0.id } })
+        )
+      }
 
       Promise.all(promises).then(() => {
         done()

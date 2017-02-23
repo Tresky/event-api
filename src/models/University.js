@@ -14,8 +14,7 @@ module.exports = (db, DataTypes) => {
       // Need to check if the university exists already
       // and if the user creating it exists.
       let promises = _.concat([],
-        universityExists(data.name),
-        db.models.User.findById(data.created_by_id)
+        universityExists(data.name)
       )
 
       Promise.all(promises)
@@ -24,10 +23,6 @@ module.exports = (db, DataTypes) => {
             // If this is true, the university already
             // exists at the given name.
             cb(new ApiErrors.UniversityExistsWithName(data), null)
-          } else if (!results[1]) {
-            // If this is true, the user that is listed
-            // as the creator of the uni does not exist.
-            cb(new ApiErrors.InvalidUserCreatingUniversity(data), null)
           } else {
             // Valid information
             let newUni = University.build(data)

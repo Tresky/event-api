@@ -18,11 +18,11 @@ module.exports = (db, DataTypes) => {
   let beforeSave = (memb, options, fn) => {
     // Cannot be an ADMIN in a university
     if (_.isNull(memb.rsoId) && memb.permissionLevel === permLevels.ADMIN) {
-      fn(new ApiErrors.InvalidUniversityPermissionLevel(memb), null)
+      fn(new ApiErrors.InvalidUniversityPermissionLevel(), null)
       return
     // Cannot be a SUPERADMIN in an RSO
     } else if (memb.rsoId && memb.permissionLevel === permLevels.SUPERADMIN) {
-      fn(new ApiErrors.InvalidRsoPermissionLevel(memb), null)
+      fn(new ApiErrors.InvalidRsoPermissionLevel(), null)
       return
     }
 

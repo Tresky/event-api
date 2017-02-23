@@ -81,6 +81,12 @@ module.exports.UserExistsWithEmail = class extends ApiError {
   }
 }
 
+module.exports.NoUniversitySpecifiedToJoin = class extends ApiError {
+  constructor (raw) {
+    super('User must be added to a University', 203, 400, raw)
+  }
+}
+
 /**
  * UniversityController Errors
  */
