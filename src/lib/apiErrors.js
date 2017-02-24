@@ -81,6 +81,12 @@ module.exports.UserExistsWithEmail = class extends ApiError {
   }
 }
 
+module.exports.NoUniversitySpecifiedToJoin = class extends ApiError {
+  constructor (raw) {
+    super('User must be added to a University', 203, 400, raw)
+  }
+}
+
 /**
  * UniversityController Errors
  */
@@ -105,6 +111,33 @@ exports.InvalidUserCreatingUniversity = class extends ApiError {
 exports.FailedToCreateUniversity = class extends ApiError {
   constructor (raw) {
     super('Failed to create university record', 303, 400, raw)
+  }
+}
+
+/**
+ * MembershipController Errors
+ */
+exports.AlreadyHaveActiveUniversityMembership = class extends ApiError {
+  constructor (raw) {
+    super('Cannot have more than one active university-level membership', 400, 400, raw)
+  }
+}
+
+exports.InvalidRsoPermissionLevel = class extends ApiError {
+  constructor (raw) {
+    super('Rso memberships cannot be SUPERADMIN', 401, 400, raw)
+  }
+}
+
+exports.InvalidUniversityPermissionLevel = class extends ApiError {
+  constructor (raw) {
+    super('University memberships cannot be ADMIN', 402, 400, raw)
+  }
+}
+
+exports.FailedToCreateMembership = class extends ApiError {
+  constructor (raw) {
+    super('Failed to create a membership record', 403, 400, raw)
   }
 }
 

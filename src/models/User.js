@@ -99,7 +99,7 @@ module.exports = (db, DataTypes) => {
                 cb(null, res)
               })
               .catch((err) => {
-                cb(new ApiErrors.FailedToCreateUser(err), null)
+                cb(new ApiErrors.FailedToSignup(err), null)
               })
           }
         })
@@ -190,11 +190,7 @@ module.exports = (db, DataTypes) => {
       defaultValue: 0
     },
     resetPasswordExpires: DataTypes.DATE,
-    resetPasswordToken: DataTypes.STRING,
-    universityId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
+    resetPasswordToken: DataTypes.STRING
   }, {
     tableName: 'Users',
     instanceMethods: instanceMethods,

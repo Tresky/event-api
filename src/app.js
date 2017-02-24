@@ -33,24 +33,54 @@ app.use(session({
   }),
   secret: secrets.sessionSecret,
   saveUninitialized: true,
-  resave: false,
-  cookie: {
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    httpOnly: true,
-    secure: true // only when on HTTPS
-  }
+  resave: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+
+// Allow for CORS requests to be made to the server. This allows
+// requests to come in from any IP address.
+app.use((req, res, next) => {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true)
+
+  // Chrome sends special OPTIONS requests before sending a real
+  // HTTP request. If we encounter one of these, intercept it and
+  // simply return an okay status.
+  if (req.method === 'OPTIONS') {
+    res.send(200)
+  } else {
+    next()
+  }
+})
+
+/**
+ * Custom middleware that will instantiate a custom permissions
+ * proxy into the request object should a user be logged in.
+ */
+import UserPermissionsProxy from './lib/userPermissionsProxy.js'
+app.use((req, res, next) => {
+  if (req.isAuthenticated()) {
+    req.permissions = new UserPermissionsProxy(req.user)
+  }
+  next()
+})
 
 // Import controllers
 let loginController = require('./controllers/loginController.js')
 let universityController = require('./controllers/universityController.js')
 
 // Define API routes
-app.route('/api/login')
+app.route('/api/auth/login')
   .post(loginController.postLogin)
-app.route('/api/signup')
+app.route('/api/auth/signup')
   .post(loginController.postSignup)
 app.route('/api/university')
   .post(universityController.create)

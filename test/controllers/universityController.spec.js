@@ -3,9 +3,13 @@ let chai = require('chai')
 let chaiHttp = require('chai-http')
 let _ = require('lodash')
 
+let passportStub = require('passport-stub')
+
 let app = require('../../src/app.js')
 let Sequelize = require('sequelize')
 let db = require('../../src/db.js')
+
+passportStub.install(app)
 
 let should = chai.should
 let expect = chai.expect
@@ -25,6 +29,7 @@ describe ('University Controller', () => {
         universityId: 0
       }).then((user) => {
         testUser = user
+        passportStub.login(testUser)
       }).catch((err) => {
         console.log('Failed creating test user', err)
       })
@@ -160,14 +165,15 @@ describe ('University Controller', () => {
     // Delete the University record that was created during
     // each test. If no record was created, just skip.
     afterEach((done) => {
-      if (!testUni) {
-        done()
-      }
-
       let promises = _.concat([],
-        db.University.destroy({ where: { id: testUni.id } }),
         db.University.destroy({ where: { id: existingUni.id } })
       )
+
+      if (testUni) {
+        promises = _.concat(promises,
+          db.University.destroy({ where: { id: testUni.id } })
+        )
+      }
 
       Promise.all(promises)
         .then(() => {
@@ -182,6 +188,8 @@ describe ('University Controller', () => {
   })
 
   describe ('universityController#destroy', () => {
+    let existingUni = null
+
     beforeEach ((done) => {
       let promises = _.concat([],
         db.University.create({
