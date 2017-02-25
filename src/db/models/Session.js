@@ -1,4 +1,4 @@
-const config = require('../../config/secrets')
+const config = require('../../../config/secrets')
 
 module.exports = (db, DataTypes) => {
   let Session = db.define('Session', {
@@ -20,7 +20,7 @@ module.exports = (db, DataTypes) => {
     timestamps: false
   })
 
-  Session.sync()
+  // Session.sync()
 
   return Session
 }

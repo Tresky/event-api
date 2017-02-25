@@ -10,7 +10,7 @@ let sequelize = new Sequelize(config.postgres.database,
                               config.postgres.username,
                               config.postgres.password,
                               config.postgres.config)
-let modelsDir = path.join(__dirname, 'models')
+let modelsDir = path.join(__dirname, 'db/models')
 
 // Import all of the models from the /models directory
 fs.readdirSync(modelsDir)

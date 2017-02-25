@@ -1,7 +1,7 @@
 let bcrypt = require('bcrypt-nodejs')
 let crypto = require('crypto')
 
-let ApiErrors = require('../lib/apiErrors')
+let ApiErrors = require('../../lib/apiErrors')
 
 module.exports = (db, DataTypes) => {
   /*******************
@@ -198,7 +198,7 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  User.sync()
+  // User.sync()
 
   /*******************
    * LOCAL FUNCTIONS *

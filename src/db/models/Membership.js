@@ -1,7 +1,7 @@
 let _ = require('lodash')
 
-let ApiErrors = require('../lib/apiErrors')
-import permLevels from '../lib/permissionLevels'
+let ApiErrors = require('../../lib/apiErrors')
+import permLevels from '../../lib/permissionLevels'
 
 module.exports = (db, DataTypes) => {
   let classMethods = {}
@@ -84,7 +84,7 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  Membership.sync()
+  // Membership.sync()
 
   /*******************
    * LOCAL FUNCTIONS *

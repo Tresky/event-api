@@ -43,7 +43,7 @@ module.exports = (db, DataTypes) => {
   })
 
   // Rso.belongsToMany(db.models.User, { through: 'Membership' })
-  Rso.sync()
+  // Rso.sync()
 
   return Rso
 }
