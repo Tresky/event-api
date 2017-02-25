@@ -69,8 +69,6 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  // University.sync()
-
   /*******************
    * LOCAL FUNCTIONS *
    *******************/

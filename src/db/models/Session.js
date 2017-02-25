@@ -20,7 +20,5 @@ module.exports = (db, DataTypes) => {
     timestamps: false
   })
 
-  // Session.sync()
-
   return Session
 }

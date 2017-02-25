@@ -84,8 +84,6 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  // Membership.sync()
-
   /*******************
    * LOCAL FUNCTIONS *
    *******************/

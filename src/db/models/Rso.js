@@ -42,8 +42,5 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  // Rso.belongsToMany(db.models.User, { through: 'Membership' })
-  // Rso.sync()
-
   return Rso
 }

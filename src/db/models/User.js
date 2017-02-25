@@ -198,8 +198,6 @@ module.exports = (db, DataTypes) => {
     hooks: hooks
   })
 
-  // User.sync()
-
   /*******************
    * LOCAL FUNCTIONS *
    *******************/
