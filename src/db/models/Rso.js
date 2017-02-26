@@ -19,7 +19,7 @@ module.exports = (db, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
-    created_by_id: {
+    createdById: {
       type: DataTypes.INTEGER,
       allowNull: false
     },

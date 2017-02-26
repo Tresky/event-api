@@ -7,7 +7,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true
       },
-      created_by_id: {
+      createdById: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
