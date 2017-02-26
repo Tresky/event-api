@@ -7,7 +7,8 @@
     "start": "nodemon ./src/app.js --exec babel-node --presets es2015",
     "test": "PG_OUTPUT_OFF=true API_ERRORS_OFF=true mocha --recursive --compilers js:babel-register",
     "lint": "eslint .",
-    "migrate": "sequelize db:migrate"
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all"
   },
   "author": "Tyler Petresky <hello@tylerpetresky.com>",
   "license": "MIT",
