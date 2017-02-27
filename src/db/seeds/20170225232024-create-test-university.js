@@ -35,29 +35,110 @@ module.exports = {
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }], { returning: true }).then(function (user) {
-              return queryInterface.bulkInsert('Membership', [{
-                userId: user[0].id,
-                rsoId: null,
+              return queryInterface.bulkInsert('Rso', [{
+                createdById: user[0].id,
+                name: 'TestRso0',
+                description: 'My description',
                 universityId: uni.id,
-                permissionLevel: 1,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
               }, {
-                userId: user[1].id,
-                rsoId: null,
+                createdById: user[0].id,
+                name: 'TestRso1',
+                description: 'My description',
                 universityId: uni.id,
-                permissionLevel: 2,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
               }, {
-                userId: user[2].id,
-                rsoId: null,
+                createdById: user[0].id,
+                name: 'TestRso2',
+                description: 'My description',
                 universityId: uni.id,
-                permissionLevel: 3,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
-              }], {}).then(function () {
-                return resolve()
+              }, {
+                createdById: user[0].id,
+                name: 'TestRso3',
+                description: 'My description',
+                universityId: uni.id,
+                createdAt: 'NOW()',
+                updatedAt: 'NOW()'
+              }], { returning: true }).then((rsos) => {
+                return queryInterface.bulkInsert('Membership', [{
+                  userId: user[0].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 1,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[1].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[2].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[0].id,
+                  rsoId: rsos[0].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[1].id,
+                  rsoId: rsos[0].id,
+                  universityId: uni.id,
+                  permissionLevel: 2,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[2].id,
+                  rsoId: rsos[1].id,
+                  universityId: uni.id,
+                  permissionLevel: 2,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[2].id,
+                  rsoId: rsos[2].id,
+                  universityId: uni.id,
+                  permissionLevel: 2,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[0].id,
+                  rsoId: rsos[3].id,
+                  universityId: uni.id,
+                  permissionLevel: 2,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[1].id,
+                  rsoId: rsos[3].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }], {}).then(function (response) {
+                  return resolve()
+                })
               })
             })
           })

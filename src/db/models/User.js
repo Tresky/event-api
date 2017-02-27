@@ -190,7 +190,12 @@ module.exports = (db, DataTypes) => {
       defaultValue: 0
     },
     resetPasswordExpires: DataTypes.DATE,
-    resetPasswordToken: DataTypes.STRING
+    resetPasswordToken: DataTypes.STRING,
+    inactiveAt: {
+      type: DataTypes.DATE(6),
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Users',
     instanceMethods: instanceMethods,

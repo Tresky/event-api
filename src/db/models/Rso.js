@@ -34,7 +34,12 @@ module.exports = (db, DataTypes) => {
     universityId: {
       type: DataTypes.INTEGER,
       allowNull: false
-    }
+    },
+    inactiveAt: {
+      type: DataTypes.DATE(6),
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Rso',
     instanceMethods: instanceMethods,

@@ -72,11 +72,11 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    active: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    }
+    inactiveAt: {
+      type: DataTypes.DATE(6),
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Membership',
     instanceMethods: instanceMethods,

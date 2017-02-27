@@ -61,7 +61,7 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    deleted_at: DataTypes.DATE
+    deleted_at: DataTypes.DATE(6)
   }, {
     tableName: 'University',
     instanceMethods: instanceMethods,
