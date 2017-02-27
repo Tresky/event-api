@@ -23,6 +23,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
+      inactiveAt: {
+        type: Sequelize.DATE(6),
+        defaultValue: null
+      },
       createdAt: {
         type: Sequelize.DATE(6),
         allowNull: false
