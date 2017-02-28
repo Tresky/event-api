@@ -1,7 +1,7 @@
 let _ = require('lodash')
 
-let ApiErrors = require('../lib/apiErrors')
-import permLevels from '../lib/permissionLevels'
+let ApiErrors = require('../../lib/apiErrors')
+import permLevels from '../../lib/permissionLevels'
 
 module.exports = (db, DataTypes) => {
   let classMethods = {}
@@ -72,19 +72,17 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    active: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    }
+    inactiveAt: {
+      type: DataTypes.DATE,
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Membership',
     instanceMethods: instanceMethods,
     classMethods: classMethods,
     hooks: hooks
   })
-
-  Membership.sync()
 
   /*******************
    * LOCAL FUNCTIONS *

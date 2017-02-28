@@ -19,7 +19,7 @@ module.exports = (db, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
-    created_by_id: {
+    createdById: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
@@ -34,16 +34,18 @@ module.exports = (db, DataTypes) => {
     universityId: {
       type: DataTypes.INTEGER,
       allowNull: false
-    }
+    },
+    inactiveAt: {
+      type: DataTypes.DATE,
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Rso',
     instanceMethods: instanceMethods,
     classMethods: classMethods,
     hooks: hooks
   })
-
-  // Rso.belongsToMany(db.models.User, { through: 'Membership' })
-  Rso.sync()
 
   return Rso
 }

@@ -1,7 +1,7 @@
 let bcrypt = require('bcrypt-nodejs')
 let crypto = require('crypto')
 
-let ApiErrors = require('../lib/apiErrors')
+let ApiErrors = require('../../lib/apiErrors')
 
 module.exports = (db, DataTypes) => {
   /*******************
@@ -190,15 +190,15 @@ module.exports = (db, DataTypes) => {
       defaultValue: 0
     },
     resetPasswordExpires: DataTypes.DATE,
-    resetPasswordToken: DataTypes.STRING
+    resetPasswordToken: DataTypes.STRING,
+    inactiveAt: DataTypes.DATE,
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Users',
     instanceMethods: instanceMethods,
     classMethods: classMethods,
     hooks: hooks
   })
-
-  User.sync()
 
   /*******************
    * LOCAL FUNCTIONS *

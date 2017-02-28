@@ -16,6 +16,7 @@ chai.use(chaiHttp)
 describe ('Login Controller', () => {
   describe ('loginController#postLogin', () => {
     let testUser = null
+    let testValidUni = null
 
     beforeEach((done) => {
       let promises = _.concat([],
@@ -84,6 +85,7 @@ describe ('Login Controller', () => {
     let testUser1 = null
     let testUser2 = null
     let testUni0 = null
+    let testValidUni = null
 
     beforeEach((done) => {
       let promises = _.concat([],
@@ -95,6 +97,14 @@ describe ('Login Controller', () => {
           testUser0 = user
         }).catch(function (err) {
           console.log('Failed creating test user', err)
+        }),
+        db.University.create({
+          name: 'Testing Valid Uni',
+          description: 'My description'
+        }).then(function (uni) {
+          testValidUni = uni
+        }).catch(function (err) {
+          console.log('Failed creating test university', err)
         })
       )
 
@@ -107,7 +117,7 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+test@gmail.com',
         password: 'password',
-        universityId: 1,
+        universityId: testValidUni.id,
         permissionLevel: 1
       }
 
@@ -183,7 +193,7 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+0@gmail.com',
         password: 'password',
-        universityId: 1,
+        universityId: testValidUni.id,
         permissionLevel: 1
       }
 
@@ -201,7 +211,7 @@ describe ('Login Controller', () => {
       let payload = {
         email: 'tnpetresky+test@gmail.com',
         password: 'password',
-        universityId: 1,
+        universityId: testValidUni.id,
         permissionLevel: 2
       }
 
@@ -219,6 +229,7 @@ describe ('Login Controller', () => {
     afterEach((done) => {
       let promises = _.concat([],
         db.User.destroy({ where: { id: testUser0.id } }),
+        db.University.destroy({ where: { id: testValidUni.id } })
       )
       if (testUser1) {
         promises = _.concat(promises,

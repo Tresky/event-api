@@ -1,6 +1,6 @@
 let _ = require('lodash')
 
-let ApiErrors = require('../lib/apiErrors')
+let ApiErrors = require('../../lib/apiErrors')
 
 module.exports = (db, DataTypes) => {
   let classMethods = {
@@ -68,8 +68,6 @@ module.exports = (db, DataTypes) => {
     classMethods: classMethods,
     hooks: hooks
   })
-
-  University.sync()
 
   /*******************
    * LOCAL FUNCTIONS *
