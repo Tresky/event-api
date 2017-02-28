@@ -24,16 +24,18 @@ module.exports = {
         allowNull: false
       },
       inactiveAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
         defaultValue: null
       },
       inactiveById: Sequelize.INTEGER,
       createdAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
       },
       updatedAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
       }
     })

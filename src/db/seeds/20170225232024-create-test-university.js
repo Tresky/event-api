@@ -22,16 +22,22 @@ module.exports = {
             return queryInterface.bulkInsert('Users', [{
               email: 'sadmin@test.com',
               password: hash,
+              inactiveAt: null,
+              inactiveById: null,
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }, {
               email: 'admin@test.com',
               password: hash,
+              inactiveAt: null,
+              inactiveById: null,
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }, {
               email: 'student@test.com',
               password: hash,
+              inactiveAt: null,
+              inactiveById: null,
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }], { returning: true }).then(function (user) {

@@ -23,17 +23,16 @@ module.exports = {
       },
       resetPasswordExpires: Sequelize.DATE,
       resetPasswordToken: Sequelize.STRING,
-      inactiveAt: {
-        type: Sequelize.DATE(6),
-        defaultValue: null
-      },
+      inactiveAt: Sequelize.DATE,
       inactiveById: Sequelize.INTEGER,
       createdAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
       },
       updatedAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: false
       }
     })

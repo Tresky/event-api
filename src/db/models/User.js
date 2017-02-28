@@ -191,10 +191,7 @@ module.exports = (db, DataTypes) => {
     },
     resetPasswordExpires: DataTypes.DATE,
     resetPasswordToken: DataTypes.STRING,
-    inactiveAt: {
-      type: DataTypes.DATE(6),
-      defaultValue: null
-    },
+    inactiveAt: DataTypes.DATE,
     inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'Users',

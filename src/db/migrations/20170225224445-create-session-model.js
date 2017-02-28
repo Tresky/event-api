@@ -11,15 +11,15 @@ module.exports = {
         allowNull: false
       },
       expire: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
         allowNull: false
       },
       createdAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
         allowNull: false
       },
       updatedAt: {
-        type: Sequelize.DATE(6),
+        type: Sequelize.DATE,
         allowNull: false
       }
     })

@@ -73,7 +73,7 @@ module.exports = (db, DataTypes) => {
       allowNull: false
     },
     inactiveAt: {
-      type: DataTypes.DATE(6),
+      type: DataTypes.DATE,
       defaultValue: null
     },
     inactiveById: DataTypes.INTEGER
