@@ -68,9 +68,12 @@ app.use((req, res, next) => {
 import UserPermissionsProxy from './lib/userPermissionsProxy.js'
 app.use((req, res, next) => {
   if (req.isAuthenticated()) {
-    req.permissions = new UserPermissionsProxy(req.user)
+    req.permissions = new UserPermissionsProxy()
+    req.permissions.init(req.user)
+      .then(() => { next() })
+  } else {
+    next()
   }
-  next()
 })
 
 // Import controllers
