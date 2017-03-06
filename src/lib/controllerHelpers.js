@@ -17,8 +17,7 @@ module.exports = {
     let intersection = _.intersection(_.keys(params), required)
 
     // We are not receiving what we were expecting, so throw an exception
-    if ((!any && intersection.length !== required.length) ||
-        (any && intersection.length === 0)) {
+    if ((!any && intersection.length !== required.length)) {
       if (_.includes(required, 'universityId') && !_.includes(intersection, 'universityId')) {
         throw new ApiErrors.NoUniversityIdMatch()
       } else {
