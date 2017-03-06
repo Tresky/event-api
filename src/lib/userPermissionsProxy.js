@@ -7,12 +7,14 @@ import permLevels from './permissionLevels'
 
 let permissions = {
   SUPERADMIN: [
-    'rso.create'
+    'rso.create',
+    'rso.destroy'
   ],
   ADMIN: [
     'events.create',
 
-    'rso.edit'
+    'rso.update',
+    'rso.destroy'
   ],
   STUDENT: [
     'events.view',
