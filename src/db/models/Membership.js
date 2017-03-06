@@ -41,6 +41,8 @@ module.exports = (db, DataTypes) => {
             fn(null, memb)
           }
         })
+    } else {
+      fn(null, memb)
     }
   }
 
