@@ -53,7 +53,6 @@ let checkPermissionSet = (permission, permissionSet, id) => {
 
 export default class UserPermissionsProxy {
   constructor () {
-    // console.log('Instantiating UserPermissionsProxy')
 
     // this.user = user
     this.memberships = []
@@ -94,7 +93,6 @@ export default class UserPermissionsProxy {
           this.permissionsByRso[memb.rsoId] = concatPerms(memb.permissionLevel)
         }
       })
-      // console.log('UserPermissionsProxy Instantiated', this.permissionsByRso, this.permissionsByUniversity)
     })
   }
 
