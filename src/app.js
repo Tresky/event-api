@@ -68,13 +68,17 @@ app.use((req, res, next) => {
 import UserPermissionsProxy from './lib/userPermissionsProxy.js'
 app.use((req, res, next) => {
   if (req.isAuthenticated()) {
-    req.permissions = new UserPermissionsProxy(req.user)
+    req.permissions = new UserPermissionsProxy()
+    req.permissions.init(req.user)
+      .then(() => { next() })
+  } else {
+    next()
   }
-  next()
 })
 
 // Import controllers
 let loginController = require('./controllers/loginController.js')
+let rsoController = require('./controllers/rsoController.js')
 let universityController = require('./controllers/universityController.js')
 
 // Define API routes
@@ -87,6 +91,13 @@ app.route('/api/university')
 app.route('/api/university/:id')
   .get(universityController.show)
   .delete(universityController.destroy)
+app.route('/api/university/:universityId/rso')
+  .get(rsoController.index)
+  .post(rsoController.create)
+app.route('/api/university/:universityId/rso/:id')
+  .get(rsoController.show)
+  .put(rsoController.update)
+  .delete(rsoController.destroy)
 
 // Handle general API errors
 app.use(ApiError.handleError)

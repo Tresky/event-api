@@ -60,6 +60,18 @@ module.exports.NoUniversityIdMatch = class extends ApiError {
   }
 }
 
+module.exports.UserNotAuthenticated = class extends ApiError {
+  constructor (raw) {
+    super('User must be authenticated to access this resource', 102, 401, raw)
+  }
+}
+
+module.exports.InvalidPermissionForAction = class extends ApiError {
+  constructor (raw) {
+    super('User lacks the valid permission to access this resource', 103, 403, raw)
+  }
+}
+
 /**
  * UserController Errors
  */
