@@ -62,7 +62,7 @@ module.exports.NoUniversityIdMatch = class extends ApiError {
 
 module.exports.UserNotAuthenticated = class extends ApiError {
   constructor (raw) {
-    super('User must be authenticated to access this resource', 102, 403, raw)
+    super('User must be authenticated to access this resource', 102, 401, raw)
   }
 }
 
