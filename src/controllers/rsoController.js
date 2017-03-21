@@ -104,15 +104,17 @@ class RsoController extends ApiController {
     // Because of the above check, this is guaranteed to have
     // at least four emails in it.
     let userChecks = _.concat([],
-      db.User.userExists(params.memberEmails[0]),
-      db.User.userExists(params.memberEmails[1]),
-      db.User.userExists(params.memberEmails[2]),
-      db.User.userExists(params.memberEmails[3])
+      db.User.findOne({ where: { email: params.memberEmails[0] } }),
+      db.User.findOne({ where: { email: params.memberEmails[1] } }),
+      db.User.findOne({ where: { email: params.memberEmails[2] } }),
+      db.User.findOne({ where: { email: params.memberEmails[3] } })
     )
 
+    let usersToAdd = []
     Promise.all(userChecks)
       .then((results) => {
         if (_.every(results, res => res)) {
+          usersToAdd = results
           executeCreation(params)
         } else {
           const returnRes = _.zipObject(params.memberEmails, results)
@@ -129,12 +131,33 @@ class RsoController extends ApiController {
         .then((rso) => {
           // Create a membership for the current user
           // as an admin in the new RSO
-          req.user.addRso(rso, {
-            permissionLevel: permLevels.ADMIN,
-            universityId: params.universityId
-          }).then((instance) => {
-            res.json(rso)
-          })
+          let membershipPromises = _.concat([],
+            req.user.addRso(rso, {
+              permissionLevel: permLevels.ADMIN,
+              universityId: params.universityId
+            }),
+            usersToAdd[0].addRso(rso, {
+              permissionLevel: permLevels.STUDENT,
+              universityId: params.universityId
+            }),
+            usersToAdd[1].addRso(rso, {
+              permissionLevel: permLevels.STUDENT,
+              universityId: params.universityId
+            }),
+            usersToAdd[2].addRso(rso, {
+              permissionLevel: permLevels.STUDENT,
+              universityId: params.universityId
+            }),
+            usersToAdd[3].addRso(rso, {
+              permissionLevel: permLevels.STUDENT,
+              universityId: params.universityId
+            })
+          )
+
+          Promise.all(membershipPromises)
+            .then(() => {
+              res.json(rso)
+            })
         }, (response) => {
           console.log('Failed to create new RSO in university', response)
           return next(new ApiError.NoRsoInUniversity({ action: 'rso#create', params: params, response: response }))
