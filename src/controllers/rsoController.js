@@ -79,6 +79,12 @@ class RsoController extends ApiController {
       ], req.params)
     )
 
+    // Ensure all emails are unique and remove the email
+    // of the current logged in user if it is present. This
+    // will prevent them from using their own email to represent
+    // two users... sneaky bastards.
+    _.pull(params.memberEmails = _.uniq(params.memberEmails), req.user.email)
+
     // TODO: Make sure that the names are unique contrained??
 
     // Make sure the authenticated user has permission

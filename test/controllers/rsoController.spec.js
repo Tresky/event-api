@@ -175,6 +175,74 @@ describe ('Rso Controller', () => {
       testCreate(params, expect, done)
     })
 
+    it ('fails to create RSO if not enough users', (done) => {
+      let params = {
+        universityId: testUni.id,
+        name: 'My RSO',
+        description: 'This is the best RSO ever!',
+        // Remove one element
+        memberEmails: _.map(users, 'email')
+      }
+      params.memberEmails.shift()
+      let expect = {
+        error: new ApiErrors.NotEnoughMembersInRso()
+      }
+
+      passportStub.login(testSadmin)
+      testCreate(params, expect, done)
+    })
+
+    it ('fails to create RSO if using the logged in user twice', (done) => {
+      let params = {
+        universityId: testUni.id,
+        name: 'My RSO',
+        description: 'This is the best RSO ever!',
+        // Remove one element
+        memberEmails: _.map(users, 'email')
+      }
+      params.memberEmails[0] = testSadmin.email
+      let expect = {
+        error: new ApiErrors.NotEnoughMembersInRso()
+      }
+
+      passportStub.login(testSadmin)
+      testCreate(params, expect, done)
+    })
+
+    it ('fails to create RSO if any user twice', (done) => {
+      let params = {
+        universityId: testUni.id,
+        name: 'My RSO',
+        description: 'This is the best RSO ever!',
+        // Remove one element
+        memberEmails: _.map(users, 'email')
+      }
+      params.memberEmails[0] = params.memberEmails[1]
+      let expect = {
+        error: new ApiErrors.NotEnoughMembersInRso()
+      }
+
+      passportStub.login(testSadmin)
+      testCreate(params, expect, done)
+    })
+
+    it ('fails to create RSO if a fake user is used', (done) => {
+      let params = {
+        universityId: testUni.id,
+        name: 'My RSO',
+        description: 'This is the best RSO ever!',
+        // Remove one element
+        memberEmails: _.map(users, 'email')
+      }
+      params.memberEmails[0] = 'fake@new.com'
+      let expect = {
+        error: new ApiErrors.InvalidUserSpecifiedForCreation()
+      }
+
+      passportStub.login(testSadmin)
+      testCreate(params, expect, done)
+    })
+
     it ('fails to create RSO if user not logged in', (done) => {
       let params = {
         universityId: testUni.id,
