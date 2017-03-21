@@ -159,6 +159,21 @@ module.exports = (db, DataTypes) => {
      */
     hasSetPassword () {
       return this.password && this.password.length > 0
+    },
+
+    isMemberOfUniversity (uniId) {
+      return db.models.Membership.findAll({
+        where: {
+          universityId: uniId,
+          userId: this.id,
+          inactiveAt: null
+        }
+      }).then((memb) => {
+        if (memb.length > 0) {
+          return true
+        }
+        return false
+      })
     }
   }
 

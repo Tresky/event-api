@@ -104,10 +104,10 @@ class RsoController extends ApiController {
     // Because of the above check, this is guaranteed to have
     // at least four emails in it.
     let userChecks = _.concat([],
-      db.User.findOne({ where: { email: params.memberEmails[0] } }),
-      db.User.findOne({ where: { email: params.memberEmails[1] } }),
-      db.User.findOne({ where: { email: params.memberEmails[2] } }),
-      db.User.findOne({ where: { email: params.memberEmails[3] } })
+      db.User.findOne({ where: { email: params.memberEmails[0], inactiveAt: null } }),
+      db.User.findOne({ where: { email: params.memberEmails[1], inactiveAt: null } }),
+      db.User.findOne({ where: { email: params.memberEmails[2], inactiveAt: null } }),
+      db.User.findOne({ where: { email: params.memberEmails[3], inactiveAt: null } })
     )
 
     let usersToAdd = []
@@ -115,9 +115,25 @@ class RsoController extends ApiController {
       .then((results) => {
         if (_.every(results, res => res)) {
           usersToAdd = results
-          executeCreation(params)
+
+          let checkingForUniMemb = _.concat([],
+            usersToAdd[0].isMemberOfUniversity(params.universityId),
+            usersToAdd[1].isMemberOfUniversity(params.universityId),
+            usersToAdd[2].isMemberOfUniversity(params.universityId),
+            usersToAdd[3].isMemberOfUniversity(params.universityId)
+          )
+
+          Promise.all(checkingForUniMemb)
+            .then((isMemb) => {
+              if (_.every(isMemb, r => r)) {
+                executeCreation(params)
+              } else {
+                const returnRes = _.zipObject(params.memberEmails, _.map(results, r => !!r))
+                return next(new ApiError.InvalidUserSpecifiedForCreation(returnRes))
+              }
+            })
         } else {
-          const returnRes = _.zipObject(params.memberEmails, results)
+          const returnRes = _.zipObject(params.memberEmails, _.map(results, r => !!r))
           return next(new ApiError.InvalidUserSpecifiedForCreation(returnRes))
         }
       })

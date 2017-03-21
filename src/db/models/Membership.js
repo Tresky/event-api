@@ -27,8 +27,9 @@ module.exports = (db, DataTypes) => {
     }
 
     // Make sure the membership is set to active -> true
-    if (!memb.active) {
-      memb.active = true
+    if (!memb.inactiveAt) {
+      memb.inactiveAt = null
+      memb.inactiveBy = null
     }
 
     // Cannot have two records within the same
@@ -97,7 +98,7 @@ module.exports = (db, DataTypes) => {
    * @return {Boolean}       True if userId exists; false otherwise
    */
   let universityMembershipExists = (userId) => {
-    return Membership.count({ where: { userId: userId, rsoId: null, active: true } })
+    return Membership.count({ where: { userId: userId, rsoId: null, inactiveAt: null } })
       .then((count) => {
         return (count > 0)
       })

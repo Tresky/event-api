@@ -150,7 +150,23 @@ describe ('Rso Controller', () => {
           Promise.all(promises)
             .then((results) => {
               users = results
-              done()
+
+              let addingUniMemb = []
+              _.each(users, (user) => {
+                let addingUniMemb = _.concat(
+                  db.Membership.create({
+                    userId: user.id,
+                    universityId: testUni.id,
+                    rsoId: null,
+                    permissionLevel: permLevels.STUDENT
+                  })
+                )
+              })
+
+              Promise.all(addingUniMemb)
+                .then(() => {
+                  done()
+                })
             })
         })
       })
