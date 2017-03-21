@@ -75,6 +75,25 @@ module.exports = (db, DataTypes) => {
     },
 
     /**
+     * Returns true or false based on the existential
+     * status of a user based on email address.
+     *
+     * Note: This function uses the local version of
+     * the same function get the result. This is why
+     * it looks so strange. See bottom of file for local.
+     * @param  {string} email Email address to lookup
+     * @return {Promise}      True if exists, false otherwise
+     */
+    userExists (email) {
+      return new Promise((resolve, reject) => {
+        userExists(email)
+          .then((result) => {
+            resolve(result)
+          })
+      })
+    },
+
+    /**
      * Creates a new user record using the given
      * data that is passed in.
      * @param {Object}   data Data to create the user with

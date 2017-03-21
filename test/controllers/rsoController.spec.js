@@ -4,6 +4,7 @@ let chaiHttp = require('chai-http')
 let chaiDate = require('chai-datetime')
 let _ = require('lodash')
 let moment = require('moment')
+var bcrypt = require('bcrypt-nodejs')
 
 let passportStub = require('passport-stub')
 
@@ -106,18 +107,69 @@ describe ('Rso Controller', () => {
   })
 
   describe ('rsoController#create', () => {
+    let users = []
+
+    before ((done) => {
+      bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+          reject(err)
+        }
+
+        bcrypt.hash('password', salt, null, (hashErr, hash) => {
+          if (hashErr) {
+            reject(hashErr)
+          }
+
+          let promises = _.concat([],
+            db.User.create({
+              email: 'test1@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null
+            }),
+            db.User.create({
+              email: 'test2@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null
+            }),
+            db.User.create({
+              email: 'test3@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null
+            }),
+            db.User.create({
+              email: 'test4@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null
+            })
+          )
+
+          Promise.all(promises)
+            .then((results) => {
+              users = results
+              done()
+            })
+        })
+      })
+    })
+
     it ('successfully creates a new RSO', (done) => {
       let params = {
         universityId: parseInt(testUni.id),
         name: 'My RSO',
-        description: 'This is the best RSO ever!'
+        description: 'This is the best RSO ever!',
+        memberEmails: _.map(users, 'email')
       }
       let expect = {
         status: 200,
-        filter: _.merge(params, {
+        filter: _.merge(_.cloneDeep(params), {
           createdById: testSadmin.id
         })
       }
+      delete expect.filter.memberEmails
 
       passportStub.login(testSadmin)
       testCreate(params, expect, done)
@@ -127,7 +179,8 @@ describe ('Rso Controller', () => {
       let params = {
         universityId: testUni.id,
         name: 'My RSO',
-        description: 'This is the best RSO ever!'
+        description: 'This is the best RSO ever!',
+        memberEmails: _.map(users, 'email')
       }
       let expect = {
         error: new ApiErrors.UserNotAuthenticated()
@@ -140,7 +193,8 @@ describe ('Rso Controller', () => {
       let params = {
         universityId: testUni.id,
         name: 'My RSO',
-        description: 'This is the best RSO ever!'
+        description: 'This is the best RSO ever!',
+        memberEmails: _.map(users, 'email')
       }
       let expect = {
         error: new ApiErrors.InvalidPermissionForAction()
@@ -154,7 +208,8 @@ describe ('Rso Controller', () => {
       let params = {
         universityId: testUni.id,
         name: 'My RSO',
-        description: 'This is the best RSO ever!'
+        description: 'This is the best RSO ever!',
+        memberEmails: _.map(users, 'email')
       }
       let expect = {
         error: new ApiErrors.InvalidPermissionForAction()
@@ -162,6 +217,19 @@ describe ('Rso Controller', () => {
 
       passportStub.login(testStudent)
       testCreate(params, expect, done)
+    })
+
+    after ((done) => {
+      let promiseArray = []
+
+      _.each(users, (user) => {
+        promiseArray = _.concat(promiseArray, user.destroy())
+      })
+
+      Promise.all(promiseArray)
+        .then(() => {
+          done()
+        })
     })
   })
 
@@ -425,6 +493,7 @@ describe ('Rso Controller', () => {
       .post(url)
       .send(payload)
       .end((err, res) => {
+        passportStub.logout()
         if (expected.filter) {
           expect(res).to.have.status(expected.status)
           _.each(expected.filter, (value, key) => {
@@ -434,13 +503,11 @@ describe ('Rso Controller', () => {
           let rso = db.Rso.build(res.body)
           rso.destroy()
             .then((response) => {
-              passportStub.logout()
               done()
             })
         } else {
           expect(res).to.have.status(expected.error.status)
           expect(res.body.errorCode).to.be.eql(expected.error.code)
-          passportStub.logout()
           done()
         }
       })

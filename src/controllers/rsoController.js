@@ -71,7 +71,8 @@ class RsoController extends ApiController {
     let params = _.merge(
       helpers.requireParams([
         'name',
-        'description'
+        'description',
+        'memberEmails'
       ], req.body),
       helpers.requireParams([
         'universityId'
@@ -86,24 +87,53 @@ class RsoController extends ApiController {
       return next(new ApiError.InvalidPermissionForAction({ action: 'rso.create', userId: req.user.id }))
     }
 
-    let payload = _.merge(params, {
-      createdById: req.user.id
-    })
+    // Check to make sure that there are enough emails being
+    // sent to have five people in the RSO.
+    // Note: We only check for having at least 4 because the
+    // fifth user is assumed to be the user who is signed in.
+    if (params.memberEmails.length < 4) {
+      return next(new ApiError.NotEnoughMembersInRso(params))
+    }
 
-    db.Rso.create(payload)
-      .then((rso) => {
-        // Create a membership for the current user
-        // as an admin in the new RSO
-        req.user.addRso(rso, {
-          permissionLevel: permLevels.ADMIN,
-          universityId: params.universityId
-        }).then((instance) => {
-          res.json(rso)
-        })
-      }, (response) => {
-        console.log('Failed to create new RSO in university', response)
-        return next(new ApiError.NoRsoInUniversity({ action: 'rso#create', params: params, response: response }))
+    // Because of the above check, this is guaranteed to have
+    // at least four emails in it.
+    let userChecks = _.concat([],
+      db.User.userExists(params.memberEmails[0]),
+      db.User.userExists(params.memberEmails[1]),
+      db.User.userExists(params.memberEmails[2]),
+      db.User.userExists(params.memberEmails[3])
+    )
+
+    Promise.all(userChecks)
+      .then((results) => {
+        if (_.every(results, res => res)) {
+          executeCreation(params)
+        } else {
+          const returnRes = _.zipObject(params.memberEmails, results)
+          return next(new ApiError.InvalidUserSpecifiedForCreation(returnRes))
+        }
       })
+
+    let executeCreation = (params) => {
+      let payload = _.merge(params, {
+        createdById: req.user.id
+      })
+
+      db.Rso.create(payload)
+        .then((rso) => {
+          // Create a membership for the current user
+          // as an admin in the new RSO
+          req.user.addRso(rso, {
+            permissionLevel: permLevels.ADMIN,
+            universityId: params.universityId
+          }).then((instance) => {
+            res.json(rso)
+          })
+        }, (response) => {
+          console.log('Failed to create new RSO in university', response)
+          return next(new ApiError.NoRsoInUniversity({ action: 'rso#create', params: params, response: response }))
+        })
+    }
   }
 
   update (req, res, next) {
