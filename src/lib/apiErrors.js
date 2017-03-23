@@ -33,7 +33,9 @@ class ApiError {
    * ApiError was built on.
    */
   printRaw () {
-    console.log(this.raw)
+    if (this.raw) {
+      console.log(this.raw)
+    }
   }
 }
 
@@ -62,7 +64,7 @@ module.exports.NoUniversityIdMatch = class extends ApiError {
 
 module.exports.UserNotAuthenticated = class extends ApiError {
   constructor (raw) {
-    super('User must be authenticated to access this resource', 102, 401, raw)
+    super('User must be authenticated to access this resource', 102, 403, raw)
   }
 }
 
@@ -150,6 +152,21 @@ exports.InvalidUniversityPermissionLevel = class extends ApiError {
 exports.FailedToCreateMembership = class extends ApiError {
   constructor (raw) {
     super('Failed to create a membership record', 403, 400, raw)
+  }
+}
+
+/**
+ * RsoController Errors
+ */
+exports.InvalidUserSpecifiedForCreation = class extends ApiError {
+  constructor (raw) {
+    super('User specified for Rso creation is invalid', 500, 400, raw)
+  }
+}
+
+exports.NotEnoughMembersInRso = class extends ApiError {
+  constructor (raw) {
+    super('Not enough members specified to create Rso', 501, 400, raw)
   }
 }
 

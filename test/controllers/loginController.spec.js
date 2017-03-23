@@ -136,7 +136,7 @@ describe ('Login Controller', () => {
               userId: res.body.user.id,
               universityId: payload.universityId,
               rsoId: null,
-              active: true
+              inactiveAt: null
             }
           }).then((count) => {
             expect(count).to.be.eql(1)
@@ -178,7 +178,7 @@ describe ('Login Controller', () => {
                 userId: res.body.user.id,
                 universityId: uni.id,
                 rsoId: null,
-                active: true
+                inactiveAt: null
               }
             }).then((count) => {
               expect(count).to.be.eql(1)
