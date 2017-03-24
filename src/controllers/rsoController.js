@@ -73,7 +73,6 @@ class RsoController extends ApiController {
         'name',
         'description',
         'memberEmails'
-        'description'
       ], req.body),
       helpers.requireParams([
         'universityId'
