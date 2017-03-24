@@ -179,6 +179,28 @@ exports.UserRecordNotFound = class extends ApiError {
   }
 }
 
+exports.NoRsoInUniversity = class extends ApiError {
+  constructor (raw) {
+    super('University lacks RSO with given ID', 502, 400, raw)
+  }
+}
+
+/**
+  * EventController Errors
+  */
+
+exports.NoEventinRso = class extends ApiError {
+  constructor (raw) {
+    super('RSO lacks event with given ID', 600, 400, raw)
+  }
+}
+
+exports.EventPrivacyRestriction = class extends ApiError {
+  constructor (raw) {
+    super('Event privacy restricted for this user', 601, 403, raw)
+  }
+}
+
 /**
  * Generates the `body` of an error based
  * on the ApiError object specified.

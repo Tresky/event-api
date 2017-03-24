@@ -28,7 +28,7 @@ module.exports = {
         allowNull: false
       },
       privacy: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       category: {

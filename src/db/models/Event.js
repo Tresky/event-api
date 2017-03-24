@@ -35,7 +35,7 @@ module.exports = (db, DataTypes) => {
       allowNull: false
     },
     privacy: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     category: {

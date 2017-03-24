@@ -1,23 +1,122 @@
-// let moment = require('moment')
+let moment = require('moment')
 let _ = require('lodash')
 
 let db = require('../db')
 // let config = require('../../config/secrets')
-let ApiError = require('../lib/apiErrors')
+let EventError = require('../lib/eventErrors')
 let helpers = require('../lib/controllerHelpers')
 
-let ApiController = require('./apiController')
+let EventController = require('./eventController')
 
-// import permLevels from '../lib/permissionLevels'
+import eventPrivacyLevels from '../lib/eventPrivacyLevels'
+
+let getAllowedPrivacy = (universityId, userId, rsoId) => {
+  return new Promise((resolve, reject) => {
+    let membershipCount = _.concat([],
+      db.Membership.count({
+        where: {
+          universityId: universityId,
+          userId: userId,
+          rsoId: null
+        }
+      }),
+      db.Membership.count({
+        where: {
+          universityId: universityId,
+          userId: userId,
+          rsoId: rsoId
+        }
+      })
+    )
+
+    let allowedPrivacy = eventPrivacyLevels.PUBLIC //public
+    Promise.all(membershipCount)
+      .then((result) => {
+        if(result[0] > 0){
+          allowedPrivacy = eventPrivacyLevels.PRIVATE
+        }
+        if(result[1] > 0){
+          allowedPrivacy = eventPrivacyLevels.RSO
+        }
+        resolve(allowedPrivacy)
+      })
+  })
+}
 
 class EventController extends ApiController {
   index (req, res, next) {
 
+    //Make sure that the user is logged in.
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
+
+    //Get the required parameters
+    let params = _.merge(
+      helpers.requireParams([
+        'name',
+        'description',
+        'startTime',
+        'endTime',
+        'privacy',
+        'category',
+        'contactPhone',
+        'contactEmail',
+        'createdById'
+      ], req.body, true),
+      helpers.requireParams([
+        'id',
+        'universityId',
+        'rsoId',
+      ], req.params),
+    )
+
+    let allowedPrivacy = eventPrivacyLevels.PUBLIC
+    getAllowedPrivacy(params.universityId, req.user.id, params.rsoId)
+      .then((privacy) => {
+        allowedPrivacy = privacy
+        let payload = params
+        db.Event.findAll({
+          where: payload
+        }).then((events) => {
+          res.json(_.filter(events, (evt) => {
+            return evt.privacy >= allowedPrivacy
+          }))
+        })
+      })
   }
 
-  show (req, res) {
+  show (req, res, next) {
+    //Make sure that the user is logged in
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
 
+    // Get the required parameters
+    let params = helpers.requireParams([
+      'universityId',
+      'rsoId',
+      'id'
+    ], req.params)
+
+    getAllowedPrivacy(params.universityId, req.user.id, params.rsoId)
+      .then((privacy) => {
+        let payload = params
+        db.Event.fineOne({
+          where: payload
+        }).then((rso) => {
+          if(privacy.rso >= privacy){
+            res.json(rso)
+          } else {
+            return next(new ApiError.EventPrivacyRestriction())
+          }
+        }, (response) => {
+          console.log('Failed to locate event in RSO', response)
+          return next(new ApiError.NoEventinRso({ action : 'event#show', params: params, response: response }))
+        })
+      })
   }
+
 
   create (req, res, next) {
     // Make sure that the user is logged in.
@@ -33,10 +132,12 @@ class EventController extends ApiController {
         'startTime',
         'endTime',
         'privacy',
-        'category',
-        'rsoId',
-        'universityId'
+        'category'
       ], req.body),
+      helpers.requireParams([
+        'universityId',
+        'rsoId'
+      ], req.params),
       helpers.requireParams([
         'contactPhone',
         'contactEmail'
@@ -61,8 +162,53 @@ class EventController extends ApiController {
       })
   }
 
-  update (req, res) {
+  update (req, res, next) {
+    // Make sure that the user is logged in
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
 
+    // Get the required parameters
+    let params = _.merge(
+      helpers.requireParams([
+        'universityId',
+        'rsoId',
+        'id'
+      ], req.params),
+      helpers.requireParams([
+        'name',
+        'description',
+        'startTime',
+        'endTime',
+        'privacy',
+        'category',
+        'contactPhone',
+        'contactEmail'
+      ], req.body, true)
+    )
+
+    if (!req.permissions.userCan('event.update', 'rso', params.rsoId)) {
+      return next(new ApiError.InvalidPermissionForAction({ action: 'events.update', params: params}))
+    }
+
+    db.Event.findOne({
+      where: {
+        id: params.id,
+        rsoId: params.rsoId,
+        universityId: params.universityId
+      }
+    }).then((event) => {
+      //Update all attributes being changed
+      _.each(params, (value, key) => {
+        if (key !== 'universityId' && key !== 'id' && key !== 'rsoId') {
+          event[key] = value
+        }
+      })
+      event.save()
+        .then((instance) => {
+          res.json(instance)
+        })
+    })
   }
 
   destroy (req, res, next) {
@@ -74,7 +220,7 @@ class EventController extends ApiController {
     // Get the required and optional parameters
     let params = helpers.requireParams([
       'id'
-    ], req.body)
+    ], req.params)
 
     // Make sure the authenticated user has permission
     // to create an event in this RSO.
@@ -85,9 +231,12 @@ class EventController extends ApiController {
     db.Event.find({
       where: { id: params.id }
     }).then((evt) => {
-      evt.active = false
+      evt.inactiveAt = moment().utc()
+      evt.inactiveById = req.user.id
       evt.save()
-      res.json(evt)
+        .then((instance) => {
+          res.json(instance)
+        })
     })
   }
 }
