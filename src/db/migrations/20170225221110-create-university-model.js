@@ -15,7 +15,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      deleted_at: Sequelize.DATE,
+      inactiveAt: {
+        type: Sequelize.DATE,
+        defaultValue: null
+      },
+      inactiveById: Sequelize.INTEGER,
       createdAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
