@@ -21,6 +21,8 @@ describe ('Login Controller', () => {
     beforeEach((done) => {
       let promises = _.concat([],
         db.User.create({
+          firstName: 'Tyler',
+          lastName: 'Petresky',
           email: 'tnpetresky+0@gmail.com',
           password: 'password',
           universityId: 1
@@ -90,6 +92,8 @@ describe ('Login Controller', () => {
     beforeEach((done) => {
       let promises = _.concat([],
         db.User.create({
+          firstName: 'Tyler',
+          lastName: 'Petresky',
           email: 'tnpetresky+0@gmail.com',
           password: 'password',
           universityId: 1
@@ -115,6 +119,8 @@ describe ('Login Controller', () => {
 
     it ('successfully signs up a new user', (done) => {
       let payload = {
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'tnpetresky+test@gmail.com',
         password: 'password',
         universityId: testValidUni.id,
@@ -147,6 +153,8 @@ describe ('Login Controller', () => {
 
     it ('successfully signs up a new user and creates a new university', (done) => {
       let payload = {
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'tnpetresky+test@gmail.com',
         password: 'password',
         permissionLevel: 1,
@@ -191,6 +199,8 @@ describe ('Login Controller', () => {
 
     it ('prohibits users from duplicating emails', (done) => {
       let payload = {
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'tnpetresky+0@gmail.com',
         password: 'password',
         universityId: testValidUni.id,
@@ -209,6 +219,8 @@ describe ('Login Controller', () => {
 
     it ('does not allow users to signup as an ADMIN in a university', (done) => {
       let payload = {
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'tnpetresky+test@gmail.com',
         password: 'password',
         universityId: testValidUni.id,

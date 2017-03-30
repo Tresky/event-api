@@ -122,24 +122,32 @@ describe ('Rso Controller', () => {
 
           let promises = _.concat([],
             db.User.create({
+              firstName: 'Test',
+              lastName: 'Test',
               email: 'test1@test.com',
               password: hash,
               inactiveAt: null,
               inactiveById: null
             }),
             db.User.create({
+              firstName: 'Test',
+              lastName: 'Test',
               email: 'test2@test.com',
               password: hash,
               inactiveAt: null,
               inactiveById: null
             }),
             db.User.create({
+              firstName: 'Test',
+              lastName: 'Test',
               email: 'test3@test.com',
               password: hash,
               inactiveAt: null,
               inactiveById: null
             }),
             db.User.create({
+              firstName: 'Test',
+              lastName: 'Test',
               email: 'test4@test.com',
               password: hash,
               inactiveAt: null,

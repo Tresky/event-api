@@ -16,11 +16,12 @@ describe ('University Model', () => {
     let testUser = null
     let existingUni = null
     let testUni0 = null
-    let testUni1 = null
 
     beforeEach((done) => {
       let promises = _.concat([],
         db.User.create({
+          firstName: 'Tyler',
+          lastName: 'Petresky',
           email: 'tnpetresky+0@gmail.com',
           password: 'password',
           universityId: 0
@@ -29,7 +30,7 @@ describe ('University Model', () => {
 
           db.University.create({
             name: 'University of South Florida',
-            created_by_id: testUser.id,
+            createdById: testUser.id,
             description: 'My description'
           }).then((uni) => {
             existingUni = uni
@@ -48,7 +49,7 @@ describe ('University Model', () => {
     it ('creates a new university', (done) => {
       let params = {
         name: 'University of Central Florida',
-        created_by_id: testUser.id,
+        createdById: testUser.id,
         description: 'Best university ever!'
       }
 
@@ -64,26 +65,10 @@ describe ('University Model', () => {
       })
     })
 
-    it ('failed to create a new university with a fake user', (done) => {
-      let params = {
-        name: 'Florida State University',
-        created_by_id: 0, // This is 0 to stage a 'fake' user
-        description: 'Sucky university! BOO!'
-      }
-
-      db.University.createUniversity(params, (err, uni) => {
-        expect(err).to.not.be.eql(null)
-        expect(err.status).to.be.eql(400)
-        expect(err.code).to.be.eql(302)
-        expect(uni).to.be.eql(null)
-        done()
-      })
-    })
-
     it ('failed to create a university that already exists', (done) => {
       let params = {
         name: existingUni.name, // This Uni is already created in beforeEach()
-        created_by_id: testUser.id,
+        createdById: testUser.id,
         description: 'My description'
       }
 
@@ -102,10 +87,6 @@ describe ('University Model', () => {
         db.University.destroy({ where: { id: existingUni.id } }),
         db.University.destroy({ where: { id: testUni0.id } })
       )
-
-      if (testUni1) {
-        promises = _.concat(promises, db.University.destroy({ where: { id: testUni1.id } }))
-      }
 
       Promise.all(promises)
         .then(() => {

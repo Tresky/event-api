@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon ./src/app.js --exec babel-node --presets es2015",
-    "pretest": "yarn migrate:test && yarn seed:test",
-    "test": "NODE_ENV=test PG_OUTPUT_OFF=true API_ERRORS_OFF=true mocha --recursive --compilers js:babel-register",
+    "test:reset": "sequelize db:migrate:undo:all --env test && yarn migrate:test && yarn seed:test",
+    "test": "NODE_ENV=test PG_OUTPUT_OFF=true API_ERRORS_OFF=true mocha --recursive --compilers js:babel-register && yarn lint",
     "lint": "eslint .",
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all",
