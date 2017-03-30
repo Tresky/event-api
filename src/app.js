@@ -10,6 +10,7 @@ let expressValidator = require('express-validator')
 let ApiError = require('./lib/apiErrors')
 
 let secrets = require('../config/secrets')
+require('../config/passport')
 
 // Create the Express server
 let app = express()

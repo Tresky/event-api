@@ -70,6 +70,8 @@ class LoginController extends ApiController {
   // permission level is SUPERADMIN.
   postSignup (req, res, next) {
     let params = helpers.requireParams([
+      'firstName',
+      'lastName',
       'email',
       'password',
       'permissionLevel'
@@ -85,7 +87,7 @@ class LoginController extends ApiController {
       return next(new ApiError.FailedToSignup(errors))
     }
 
-    let userPayload = _.pick(params, ['email', 'password'])
+    let userPayload = _.pick(params, ['email', 'password', 'firstName', 'lastName'])
 
     // Add the user to an existing University
     if (params.universityId) {

@@ -18,6 +18,8 @@ describe('User model', function () {
   beforeEach(function (done) {
     let promises = _.concat([],
       db.User.create({
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'tnpetresky+0@gmail.com',
         password: 'password',
         universityId: 0
@@ -27,7 +29,7 @@ describe('User model', function () {
         console.log('Failed creating test user', err)
       }),
       db.Rso.create({
-        created_by_id: 42,
+        createdById: 42,
         name: 'TechKnights',
         universityId: 1
       }).then(function (rso) {
@@ -36,7 +38,7 @@ describe('User model', function () {
         console.log('Failed creating test rso', err)
       }),
       db.University.create({
-        created_by_id: 42,
+        createdById: 42,
         name: 'UCF'
       }).then(function (uni) {
         testUni = uni
@@ -51,8 +53,10 @@ describe('User model', function () {
   })
 
   it ('should become associated with an RSO through a Membership', function (done) {
-    testUser.addRso(testRso)
-      .then(function (data) {
+    testUser.addRso(testRso, {
+      universityId: testUni.id,
+      permissionLevel: 3
+    }).then(function (data) {
         db.Membership.findAll({
           where: {
             userId: testUser.id,
@@ -62,6 +66,7 @@ describe('User model', function () {
           assert(membs.length === 1)
           assert(membs[0].get('userId') === testUser.id)
           assert(membs[0].get('rsoId') === testRso.id)
+          assert(membs[0].get('universityId') === testUni.id)
           done()
         }, function (err) {
           done(err)
