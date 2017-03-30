@@ -7,6 +7,9 @@ import permLevels from './permissionLevels'
 
 let permissions = {
   SUPERADMIN: [
+    'university.update',
+    'university.destroy',
+
     'rso.create',
     'rso.destroy'
   ],
@@ -53,7 +56,6 @@ let checkPermissionSet = (permission, permissionSet, id) => {
 
 export default class UserPermissionsProxy {
   constructor () {
-
     this.memberships = []
     this.permissionsByRso = {}
     this.permissionsByUniversity = {}

@@ -61,7 +61,11 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    deleted_at: DataTypes.DATE
+    inactiveAt: {
+      type: DataTypes.DATE,
+      defaultValue: null
+    },
+    inactiveById: DataTypes.INTEGER
   }, {
     tableName: 'University',
     instanceMethods: instanceMethods,
