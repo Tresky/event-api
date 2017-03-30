@@ -23,6 +23,14 @@ let generateJwt = (user) => {
 }
 
 class LoginController extends ApiController {
+  /**
+   * @api {post} /api/auth/login Login and Request JWT
+   * @apiName login
+   * @apiGroup Authentication
+   *
+   * @apiParam {String} email Email of the user logging in
+   * @apiParam {String} password Password of the user logging in
+   */
   postLogin (req, res, next) {
     req.assert('email', 'required').notEmpty()
     req.assert('email', 'valid email required').isEmail()
@@ -62,13 +70,30 @@ class LoginController extends ApiController {
     res.locals.user = null
   }
 
-  // There are three primary branches of logic involved in creating a user.
-  // If you specify a universityId, the function will make sure that a
-  // university with that ID exists. If not, an error is raised, if so,
-  // the user gets created. If you don't specify a universityId, a new one
-  // can be created only if you specify the parameters for it and the user's
-  // permission level is SUPERADMIN.
+  /**
+   * @api {post} /api/auth/signup Signup for a New Account
+   * @apiName signup
+   * @apiGroup Authentication
+   * @apiDescription Signs a new up for a new account; must pass a universityId to add the user
+   *                 to a University. If no id is presented, the optional fields below must be
+   *                 specified to define the new University.
+   *
+   * @apiParam {String} firstName First name of the user signing up
+   * @apiParam {String} lastName Last name of the user signing up
+   * @apiParam {String} email Email of the user signing up
+   * @apiParam {String} password Password of the user signing up
+   * @apiParam {Integer} permissionLevel Permission level to sign the user up with (STUDENT or SUPERADMIN; must be SUPERADMIN to create University)
+   * @apiParam {Integer} [universityId] Id of the University to add them to; null if creating a new University (optional)
+   * @apiParam {String} [universityName] Name of the new University to create (optional)
+   * @apiParam {String} [description] Description of the new University to create (optional)
+   */
   postSignup (req, res, next) {
+    // There are three primary branches of logic involved in creating a user.
+    // If you specify a universityId, the function will make sure that a
+    // university with that ID exists. If not, an error is raised, if so,
+    // the user gets created. If you don't specify a universityId, a new one
+    // can be created only if you specify the parameters for it and the user's
+    // permission level is SUPERADMIN.
     let params = helpers.requireParams([
       'firstName',
       'lastName',

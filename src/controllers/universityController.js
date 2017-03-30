@@ -8,6 +8,27 @@ let ApiError = require('../lib/apiErrors')
 let ApiController = require('./apiController')
 
 class UniversityController extends ApiController {
+  /**
+   * @api {put} /api/university Select Universities
+   * @apiName getAllUni
+   * @apiGroup University
+   * @apiDescription Select all Universities matching a query; if no optional parameters
+   *                 are specified, a list of all Universities will be returned.
+   *
+   * @apiParam (Body Params) {String} [name] Name of the University to select
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   [{
+   *    id: 1,
+   *    name: 'University of Central Florida',
+   *    ...
+   *   }, {
+   *    id: 2,
+   *    name: 'University of South Texas',
+   *    ...
+   *   }]
+   */
   index (req, res, next) {
     // Get the required parameters
     let params = helpers.requireParams([
@@ -22,6 +43,22 @@ class UniversityController extends ApiController {
     })
   }
 
+  /**
+   * @api {get} /api/university/:id Select Single University
+   * @apiName getUni
+   * @apiGroup University
+   * @apiDescription Returns a single University record with the specified ID
+   *
+   * @apiParam (URL Params) {Integer} id Id of the University record to fetch
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 2,
+   *    name: 'University of Central Florida',
+   *    ...
+   *   }
+   */
   show (req, res, next) {
     // Get the required parameters
     let params = helpers.requireParams([
@@ -37,6 +74,23 @@ class UniversityController extends ApiController {
       })
   }
 
+  /**
+   * @api {put} /api/university/:id Update a University
+   * @apiName updateUni
+   * @apiGroup University
+   * @apiDescription Update an existing University record with the specified ID
+   *
+   * @apiParam (URL Params) {Integer} id Id of the University record to fetch
+   * @apiParam (Body Params) {String} [description] New description of the University
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 2,
+   *    name: 'University of Central Florida',
+   *    ...
+   *   }
+   */
   update (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -75,12 +129,22 @@ class UniversityController extends ApiController {
     })
   }
 
-  // The destroy functionality doesn't actually destroy
-  // the record being targeted in the traditional sense.
-  // Instead, a deleted_at timestamp is set to signal to
-  // us that this record should no longer be used. This
-  // allows us to keep a full history of records and we
-  // never lose data.
+  /**
+   * @api {delete} /api/university/:universityId Destroy University
+   * @apiName destroyUni
+   * @apiGroup University
+   * @apiDescription Mark a University as inactive
+   *
+   * @apiParam (URL Params) {Integer} id Id of the University to select within
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Tech Knights',
+   *    ...
+   *   }
+   */
   destroy (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {

@@ -11,7 +11,9 @@
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all",
     "migrate:test": "sequelize db:migrate --env test",
-    "seed:test": "sequelize db:seed:all --env test"
+    "seed:test": "sequelize db:seed:all --env test",
+    "docs": "apidoc -i src/controllers -o apidoc/",
+    "docs:open": "open apidoc/index.html"
   },
   "author": "Tyler Petresky <hello@tylerpetresky.com>",
   "license": "MIT",

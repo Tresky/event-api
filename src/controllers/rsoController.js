@@ -10,6 +10,29 @@ let ApiController = require('./apiController')
 import permLevels from '../lib/permissionLevels'
 
 class RsoController extends ApiController {
+  /**
+   * @api {get} /api/university/:universityId/rso Select RSOs
+   * @apiName getAllRsos
+   * @apiGroup RSO
+   * @apiDescription If no optional parameters are specified, all RSOs within the university
+   *                 specified will be retrieved. Also, this function will only ever return
+   *                 RSOs that are currently 'active' (rso.inactiveAt === null).
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the university to select within
+   * @apiParam (Body Params) {String} [name] Name of the university to fetch
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   [{
+   *    id: 2,
+   *    name: 'Tech Knights',
+   *    ...
+   *   }, {
+   *    id: 5,
+   *    name: 'Sowing Club',
+   *    ...
+   *   }]
+   */
   index (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -37,6 +60,23 @@ class RsoController extends ApiController {
     })
   }
 
+  /**
+   * @api {get} /api/university/:universityId/rso/:id Select Single RSO
+   * @apiName getRso
+   * @apiGroup RSO
+   * @apiDescription Returns a single RSO record with the specified ID
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the university to select within
+   * @apiParam (URL Params) {Integer} id Id of the RSO record to fetch
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 2,
+   *    name: 'Rowing Clud',
+   *    ...
+   *   }
+   */
   show (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -61,6 +101,25 @@ class RsoController extends ApiController {
     })
   }
 
+  /**
+   * @api {post} /api/university/:universityId/rso Create RSO
+   * @apiName createRso
+   * @apiGroup RSO
+   * @apiDescription Creates a new RSO record with the given data
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
+   * @apiParam (Body Params) {String} name Name of the new Rso
+   * @apiParam (Body Params) {String} description Description of the new Rso
+   * @apiParam (Body Params) {Array} memberEmails Array of four emails for the other members signing up
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Tech Knights',
+   *    ...
+   *   }
+   */
   create (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -181,6 +240,25 @@ class RsoController extends ApiController {
     }
   }
 
+  /**
+   * @api {put} /api/university/:universityId/rso/:id Update RSO
+   * @apiName updateRso
+   * @apiGroup RSO
+   * @apiDescription Update an existing RSO record with the given data
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
+   * @apiParam (URL Params) {Integer} id Id of the Rso to update
+   * @apiParam (Body Params) {String} [name] Name of the new Rso
+   * @apiParam (Body Params) {String} [description] Description of the new Rso
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Tech Knights',
+   *    ...
+   *   }
+   */
   update (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -224,6 +302,23 @@ class RsoController extends ApiController {
     })
   }
 
+  /**
+   * @api {delete} /api/university/:universityId/rso/:id Destroy RSO
+   * @apiName destroyRso
+   * @apiGroup RSO
+   * @apiDescription Mark an RSO as inactive
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
+   * @apiParam (URL Params) {Integer} id Id of the Rso to destroy
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Tech Knights',
+   *    ...
+   *   }
+   */
   destroy (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {

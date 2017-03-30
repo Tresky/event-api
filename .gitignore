@@ -1,5 +1,6 @@
 **/.DS_Store
 .idea
+apidoc
 build
 config/secrets.js
 node_modules
