@@ -53,7 +53,6 @@ let checkPermissionSet = (permission, permissionSet, id) => {
 
 export default class UserPermissionsProxy {
   constructor () {
-
     this.memberships = []
     this.permissionsByRso = {}
     this.permissionsByUniversity = {}

@@ -1,12 +1,72 @@
-// req: The incoming request. Params are attached to req.body.param1, req.body.param2, etc
-// res: The result object. This is used to return results to the frontend.
-// exports.index = (req, res) => {
-//   db.Users.findAll({
-//     /* Parameters to filter by */
-//   }).then((users) => {
-//     /* The 'crimes' object contains the results.
-//      * Return them to the frontend as follows.
-//      */
-//     res.send(users)
-//   })
-// }
+let _ = require('lodash')
+
+let db = require('../db')
+let ApiError = require('../lib/apiErrors')
+let helpers = require('../lib/controllerHelpers')
+
+let ApiController = require('./apiController')
+
+class UserController extends ApiController {
+  show (req, res, next) {
+    // Make sure that the user is logged in.
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
+
+    let params = helpers.requireParams([
+      'id'
+    ], req.params)
+
+    let payload = params
+    db.User.findOne({
+      where: payload
+    }).then((user) => {
+      if (!user) {
+        return next(new ApiError.UserRecordNotFound())
+      }
+      res.json(user)
+    })
+  }
+
+  update (req, res, next) {
+    // Make sure that the user is logged in.
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
+
+    // Get the required parameters
+    let params = _.merge(
+      helpers.requireParams([
+        'email'
+      ], req.body, true),
+      helpers.requireParams([
+        'id'
+      ], req.params)
+    )
+
+    // Make sure the authenticated user has permission
+    // to create an event in this RSO.
+    if (req.user.id !== parseInt(params.id)) {
+      return next(new ApiError.InvalidPermissionForAction({ action: 'user.update', params: params }))
+    }
+
+    db.User.findOne({
+      where: {
+        id: params.id
+      }
+    }).then((user) => {
+      // Update all attributes that are being changed
+      _.each(params, (value, key) => {
+        if (key !== 'id') {
+          user[key] = value
+        }
+      })
+      user.save()
+        .then((instance) => {
+          res.json(instance)
+        })
+    })
+  }
+}
+
+module.exports = new UserController()

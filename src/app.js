@@ -10,7 +10,6 @@ let expressValidator = require('express-validator')
 let ApiError = require('./lib/apiErrors')
 
 let secrets = require('../config/secrets')
-let passportConf = require('../config/passport')
 
 // Create the Express server
 let app = express()
@@ -77,9 +76,10 @@ app.use((req, res, next) => {
 })
 
 // Import controllers
-let loginController = require('./controllers/loginController.js')
-let rsoController = require('./controllers/rsoController.js')
-let universityController = require('./controllers/universityController.js')
+let loginController = require('./controllers/loginController')
+let rsoController = require('./controllers/rsoController')
+let universityController = require('./controllers/universityController')
+let userController = require('./controllers/usersController')
 
 // Define API routes
 app.route('/api/auth/login')
@@ -98,6 +98,9 @@ app.route('/api/university/:universityId/rso/:id')
   .get(rsoController.show)
   .put(rsoController.update)
   .delete(rsoController.destroy)
+app.route('/api/users/:id')
+  .get(userController.show)
+  .put(userController.update)
 
 // Handle general API errors
 app.use(ApiError.handleError)
