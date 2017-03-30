@@ -20,6 +20,8 @@ module.exports = {
               reject(hashErr)
             }
             return queryInterface.bulkInsert('Users', [{
+              firstName: 'Tyler',
+              lastName: 'Petresky',
               email: 'sadmin@test.com',
               password: hash,
               inactiveAt: null,
@@ -27,6 +29,8 @@ module.exports = {
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }, {
+              firstName: 'Tyler',
+              lastName: 'Gauntlett',
               email: 'admin@test.com',
               password: hash,
               inactiveAt: null,
@@ -34,6 +38,8 @@ module.exports = {
               createdAt: 'NOW()',
               updatedAt: 'NOW()'
             }, {
+              firstName: 'Kara',
+              lastName: 'Singletary',
               email: 'student@test.com',
               password: hash,
               inactiveAt: null,
