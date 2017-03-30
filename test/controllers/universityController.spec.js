@@ -76,22 +76,6 @@ describe ('University Controller', () => {
           done()
         })
     })
-
-    it ('fails to retrieve universities when not logged in', (done) => {
-      let payload = {}
-      let expected = {
-        error: new ApiError.UserNotAuthenticated()
-      }
-
-      chai.request(app)
-        .get('/api/university')
-        .send(payload)
-        .end((err, res) => {
-          expect(res).to.have.status(expected.error.status)
-          expect(res.body.errorCode).to.be.eql(expected.error.code)
-          done()
-        })
-    })
   })
 
   describe ('universityController#show', () => {
@@ -108,25 +92,6 @@ describe ('University Controller', () => {
           passportStub.logout()
           expect(res).to.have.status(200)
           expect(res.body.id).to.be.eql(testUni.id)
-          done()
-        })
-    })
-
-    it ('fails to retrieve university when not logged in', (done) => {
-      let payload = {
-        id: testUni.id
-      }
-      let expected = {
-        error: new ApiError.UserNotAuthenticated()
-      }
-
-      // passportStub.login(testSadmin)
-      chai.request(app)
-        .get(`/api/university/${payload.id}`)
-        .send(payload)
-        .end((err, res) => {
-          expect(res).to.have.status(expected.error.status)
-          expect(res.body.errorCode).to.be.eql(expected.error.code)
           done()
         })
     })

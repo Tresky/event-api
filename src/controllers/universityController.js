@@ -9,11 +9,6 @@ let ApiController = require('./apiController')
 
 class UniversityController extends ApiController {
   index (req, res, next) {
-    // Make sure that the user is logged in.
-    if (!req.isAuthenticated()) {
-      return next(new ApiError.UserNotAuthenticated())
-    }
-
     // Get the required parameters
     let params = helpers.requireParams([
       'name'
@@ -28,11 +23,6 @@ class UniversityController extends ApiController {
   }
 
   show (req, res, next) {
-    // Make sure that the user is logged in.
-    if (!req.isAuthenticated()) {
-      return next(new ApiError.UserNotAuthenticated())
-    }
-
     // Get the required parameters
     let params = helpers.requireParams([
       'id'
