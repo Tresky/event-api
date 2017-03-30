@@ -75,7 +75,7 @@ module.exports.InvalidPermissionForAction = class extends ApiError {
 }
 
 /**
- * UserController Errors
+ * LoginController Errors
  */
 module.exports.FailedToLogin = class extends ApiError {
   constructor (raw) {
@@ -167,6 +167,15 @@ exports.InvalidUserSpecifiedForCreation = class extends ApiError {
 exports.NotEnoughMembersInRso = class extends ApiError {
   constructor (raw) {
     super('Not enough members specified to create Rso', 501, 400, raw)
+  }
+}
+
+/**
+ * UserController Errors
+ */
+exports.UserRecordNotFound = class extends ApiError {
+  constructor (raw) {
+    super('User record with given ID was not found', 700, 400, raw)
   }
 }
 

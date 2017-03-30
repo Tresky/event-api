@@ -84,7 +84,7 @@ class RsoController extends ApiController {
     // will prevent them from using their own email to represent
     // two users... sneaky bastards.
     _.pull(params.memberEmails = _.uniq(params.memberEmails), req.user.email)
-    
+
     // TODO: Make sure that the names are unique contrained??
 
     // Make sure the authenticated user has permission
