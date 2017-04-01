@@ -124,6 +124,11 @@ class EventController extends ApiController {
       return next(new ApiError.UserNotAuthenticated())
     }
 
+    //make sure user is member of rso
+    if(!Membership.count({ where: { userId: userId, rsoId: rsoId, inactiveAt: null } })) {
+      return next(new ApiError.UserNotInRso())
+    }
+
     // Get the required and optional parameters
     let params = _.merge(
       helpers.requireParams([

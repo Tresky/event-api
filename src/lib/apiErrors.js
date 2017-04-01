@@ -201,6 +201,11 @@ exports.EventPrivacyRestriction = class extends ApiError {
   }
 }
 
+exports.UserNotInRso = class extends ApiError {
+  constructor (raw) {
+    super('User not in RSO', 602, 403, raw)
+  }
+}
 /**
  * Generates the `body` of an error based
  * on the ApiError object specified.

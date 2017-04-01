@@ -20,6 +20,8 @@ describe ('Event Controller', () => {
   let testUni = null
   let testRso = null
   let testUser = null
+  let testNotMember = null
+  let testNoPermissionUser = null
   let memberships = []
 
   // Create a User record to use throughout all tests
@@ -68,17 +70,65 @@ describe ('Event Controller', () => {
   }) // #before()
 
 
-
-
-
-
-
   describe ('eventController#index', () => {
 
+    it ('successfully queries all events', (done) => {
+      let params = {
+        universityId: testUni.id,
+        rsoId: testRso.id
+      }
+      let expect = {
+        status: 200,
+        filter: _.filter(testEvents, (event) => {
+          return event.rsoId == params.rsoId
+        })
+      }
+
+      passportStub.login(testUser)
+      testIndex(params, expect, done)
+    })
+
+    it ('fails to query events if user not logged in', (done) => {
+      let params = {
+        universityId: testUni.id,
+        rsoId: testRso.id
+      }
+      let expect = {
+        error: new ApiErrors.UserNotAuthenticated()
+      }
+
+      testIndex(params, expect, done)
+    })
   })
 
   describe ('eventController#show', () => {
+    it ('successfully queries for an event id', (done) => {
+      let params = {
+        universityId: testUni.id,
+        rsoId: testRso.id,
+        eventId: testEvents[0].id
+      }
+      let expect = {
+        status: 200,
+        filter: testEvents[0]
+      }
 
+      passportStub.login(testUser)
+      testShow(params, expect, done)
+    })
+
+    it ('fails to query event if user not logged in', (done) => {
+      let params = {
+        universityId: testUni.id,
+        rsoId: testRso.id,
+        eventId: testEvents[0].id
+      }
+      let expect = {
+        error: new ApiErrors.UserNotAuthenticated()
+      }
+
+      testShow(params, expect, done)
+    })
   })
 
   describe ('eventController#create', () => {
@@ -111,6 +161,7 @@ describe ('Event Controller', () => {
         })
     })
 
+    //should user change so it fails?
     it ('fails to create a new event when not logged in', (done) => {
       let payload = {
         name: 'Open Mic Night',
@@ -134,11 +185,51 @@ describe ('Event Controller', () => {
     })
 
     it ('fails to create a new event when only a student', (done) => {
-      done()
+      let payload = {
+        name: 'Open Mic Night',
+        description: 'Come join us for a fun time!',
+        startTime: moment().add(7, 'days').utc(),
+        endTime: moment().add(8, 'days').utc(),
+        privacy: 'public',
+        category: 'Music',
+        universityId: testUni.id,
+        rsoId: testRso.id
+      }
+
+      passportStub.login(testUser)
+      
+      chai.request(app)
+        .post('/api/event')
+        .send(payload)
+        .end((err, res) => {
+          expect(res).to.have.status(403)
+          expect(res.body.errorCode).to.be.eql(103)
+          done()
+        })
     })
 
     it ('fails to create a new event when not in rso', (done) => {
-      done()
+      let payload = {
+        name: 'Open Mic Night',
+        description: 'Come join us for a fun time!',
+        startTime: moment().add(7, 'days').utc(),
+        endTime: moment().add(8, 'days').utc(),
+        privacy: 'public',
+        category: 'Music',
+        universityId: testUni.id,
+        rsoId: testRso.id
+      }
+
+      passportStub.login(testUser)
+      
+      chai.request(app)
+        .post('/api/event')
+        .send(payload)
+        .end((err, res) => {
+          expect(res).to.have.status(403)
+          expect(res.body.errorCode).to.be.eql(602)
+          done()
+        })
     })
 
     afterEach((done) => {
@@ -161,7 +252,87 @@ describe ('Event Controller', () => {
   })
 
   describe ('eventController#update', () => {
+    let updateEvent = null
 
+    beforeEach((done) => {
+      passportStub.login(testUser)
+      db.Event.create({
+        name: 'Open Mic Night',
+        description: 'Come join us for a fun time!',
+        startTime: moment().add(7, 'days').utc(),
+        endTime: moment().add(8, 'days').utc(),
+        privacy: 'public',
+        category: 'Music',
+        universityId: testUni.id,
+        rsoId: testRso.id
+      }).then((event) => {
+        updateEvent = event
+        testUser.addEvent(updateEvent, {
+          permissionLevel: permLevels.ADMIN,
+          universityId: testUni.id,
+          rsoId: testRso.id
+        }).then(() => {
+          passportStub.logout()
+          done()
+        }).catch((response) => { console.log('check', response, permLevels)})
+      })
+    })
+
+    it ('successfully updates an event when logged in as an admin', (done) => {
+      let payload = {
+        eventId: updateEvent.id,
+        universityId: testUni.id,
+        rsoId: testRso.id,
+        name: 'My Updated Event'
+      }
+      let expect = {
+        status: 200,
+        filter: {
+          eventId: updateEvent.id,
+          universityId: testUni.id,
+          rsoId: testRso.id,
+          name: 'My Updated Event'
+          description: updateEvent.description,
+          createdById: testUser.id
+        }
+      }
+
+      passportStub.login(testUser)
+      testUpdate(payload, expect, done)
+    })
+
+    it ('fails to update an event when not logged in', (done) => {
+      let payload = {
+        eventId: updateEvent.id,
+        universityId: testUni.id,
+        rsoId: testRso.id,
+        name: 'My Updated Event'
+      }
+      let expect = {
+        error: new ApiErrors.UserNotAuthenticated()
+      }
+
+      testUpdate(payload, expect, done)
+    })
+
+    it ('fails to update an event when not an admin in the event', (done) => {
+      let payload = {
+        eventId: updateEvent.id,
+        universityId: testUni.id,
+        rsoId: testRso.id,
+        name: 'My Updated Event'
+      }
+      let expect = {
+        error: new ApiErrors.InvalidPermissionForAction()
+      }
+
+      passportStub.login(testUser) //should be testNoPermissionUser?
+      testUpdate(payload, expect, done)
+    })
+
+    afterEach((done) => {
+      updateEvent.destroy().then(() => { done() })
+    })
   })
 
   describe ('eventController#destroy', () => {
