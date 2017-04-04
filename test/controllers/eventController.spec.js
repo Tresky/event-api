@@ -34,6 +34,8 @@ describe ('Event Controller', () => {
     }).then((uni) => {
       testUni = uni
       db.User.create({
+        firstName: 'Tyler',
+        lastName: 'Petresky',
         email: 'eventtest@test.com',
         password: 'password',
         universityId: testUni.id
@@ -289,7 +291,7 @@ describe ('Event Controller', () => {
           eventId: updateEvent.id,
           universityId: testUni.id,
           rsoId: testRso.id,
-          name: 'My Updated Event'
+          name: 'My Updated Event',
           description: updateEvent.description,
           createdById: testUser.id
         }
