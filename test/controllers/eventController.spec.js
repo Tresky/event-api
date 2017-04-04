@@ -69,7 +69,6 @@ describe ('Event Controller', () => {
     })
   }) // #before()
 
-
   describe ('eventController#index', () => {
 
     it ('successfully queries all events', (done) => {
@@ -161,7 +160,6 @@ describe ('Event Controller', () => {
         })
     })
 
-    //should user change so it fails?
     it ('fails to create a new event when not logged in', (done) => {
       let payload = {
         name: 'Open Mic Night',

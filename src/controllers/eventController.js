@@ -3,10 +3,12 @@ let _ = require('lodash')
 
 let db = require('../db')
 // let config = require('../../config/secrets')
-let EventError = require('../lib/eventErrors')
 let helpers = require('../lib/controllerHelpers')
 
-let EventController = require('./eventController')
+let ApiController = require('./apiController')
+
+let ApiError = require('../lib/apiErrors')
+let helpers = require('../lib/controllerHelpers')
 
 import eventPrivacyLevels from '../lib/eventPrivacyLevels'
 
@@ -32,10 +34,10 @@ let getAllowedPrivacy = (universityId, userId, rsoId) => {
     let allowedPrivacy = eventPrivacyLevels.PUBLIC //public
     Promise.all(membershipCount)
       .then((result) => {
-        if(result[0] > 0){
+        if (result[0] > 0) {
           allowedPrivacy = eventPrivacyLevels.PRIVATE
         }
-        if(result[1] > 0){
+        if (result[1] > 0) {
           allowedPrivacy = eventPrivacyLevels.RSO
         }
         resolve(allowedPrivacy)
@@ -45,7 +47,6 @@ let getAllowedPrivacy = (universityId, userId, rsoId) => {
 
 class EventController extends ApiController {
   index (req, res, next) {
-
     //Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
       return next(new ApiError.UserNotAuthenticated())
@@ -116,7 +117,6 @@ class EventController extends ApiController {
         })
       })
   }
-
 
   create (req, res, next) {
     // Make sure that the user is logged in.
