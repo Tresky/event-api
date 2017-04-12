@@ -177,18 +177,7 @@ class LoginController extends ApiController {
           .then((memb) => {
             // If the user gets created successfully,
             // go ahead and sign them in.
-            req.logIn(user, (loginErr) => {
-              if (loginErr) {
-                if (revertUni) {
-                  revertUni(loginErr)
-                }
-                revertUser(loginErr)
-                return next(new ApiError.FailedToLogin(loginErr))
-              }
-
-              // Return the user record
-              res.json({ token: generateJwt(user), user: user })
-            })
+            res.json({ token: generateJwt(user), user: user })
           }, (response) => {
             // Roll back the creation of the User if creating
             // the Membership failed.
