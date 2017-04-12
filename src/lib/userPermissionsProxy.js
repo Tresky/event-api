@@ -22,7 +22,8 @@ let permissions = {
   STUDENT: [
     'events.view',
 
-    'rso.subscribe'
+    'rso.subscribe',
+    'comment.create'
   ]
 }
 

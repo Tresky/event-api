@@ -221,6 +221,15 @@ exports.UserAlreadySubscribedToRso = class extends ApiError {
   }
 }
 
+/** 
+ * CommentController Errors
+ */
+exports.NoCommentRecordExists = class extends ApiError {
+  constructor (raw) {
+    super('Comment record does not exist', 800, 400, raw)
+  }
+}
+
 /**
  * Generates the `body` of an error based
  * on the ApiError object specified.
