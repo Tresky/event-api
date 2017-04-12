@@ -81,7 +81,9 @@ class EventController extends ApiController {
     getAllowedPrivacy(params.universityId, req.user.id, params.rsoId || undefined)
       .then((privacy) => {
         allowedPrivacy = privacy
-        let payload = params
+        let payload = _.merge({
+          inactiveAt: null
+        }, params)
         db.Event.findAll({
           where: payload
         }).then((events) => {
