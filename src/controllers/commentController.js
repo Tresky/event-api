@@ -9,6 +9,27 @@ let ApiController = require('./apiController')
 let ApiError = require('../lib/apiErrors')
 
 class CommentController extends ApiController {
+  /**
+   * @api {get} /api/event/:eventId/comment Select Comments on Event
+   * @apiName getAllComments
+   * @apiGroup Comment
+   * @apiDescription Can request comments that are attached to an event. There
+   *                 are no body parameters for this function; only URL parameters.
+   *
+   * @apiParam (URL Params) {Integer} eventId Id of the event to get comments for
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   [{
+   *    id: 2,
+   *    message: 'Good event idea!',
+   *    ...
+   *   }, {
+   *    id: 5,
+   *    message: 'Can\' wait to attend this event!',
+   *    ...
+   *   }]
+   */
   index (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -30,6 +51,23 @@ class CommentController extends ApiController {
     })
   }
 
+  /**
+   * @api {get} /api/event/:eventId/comment/:id Select Single Comment
+   * @apiName getComment
+   * @apiGroup Comment
+   * @apiDescription Returns a single Comment record with the specified ID
+   *
+   * @apiParam (URL Params) {Integer} eventId Id of the event to select from
+   * @apiParam (URL Params) {Integer} id Id of the Comment record to fetch
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 2,
+   *    message: 'Cool event idea!',
+   *    ...
+   *   }
+   */
   show (req, res, next) {
     // Make sure that the user is logged in
     if (!req.isAuthenticated()) {
@@ -52,6 +90,23 @@ class CommentController extends ApiController {
       })
   }
 
+  /**
+   * @api {post} /api/event/:eventId/comment Create Comment
+   * @apiName createComment
+   * @apiGroup Comment
+   * @apiDescription Creates a new Comment record with the given data
+   *
+   * @apiParam (URL Params) {Integer} eventId Id of the Event to post to
+   * @apiParam (Body Params) {String} message Text of the message of the comment
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    message: 'New comment',
+   *    ...
+   *   }
+   */
   create (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -86,6 +141,24 @@ class CommentController extends ApiController {
       })
   }
 
+  /**
+   * @api {put} /api/event/:eventId/coment/:id Update Comment
+   * @apiName updateComment
+   * @apiGroup Comment
+   * @apiDescription Update an existing Comment record with the given data
+   *
+   * @apiParam (URL Params) {Integer} eventId Id of the Comment to select within
+   * @apiParam (URL Params) {Integer} id Id of the Comment to update
+   * @apiParam (Body Params) {String} [message] Message text to update
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    message: 'Updated comment',
+   *    ...
+   *   }
+   */
   update (req, res, next) {
     // Make sure that the user is logged in
     if (!req.isAuthenticated()) {
@@ -122,6 +195,24 @@ class CommentController extends ApiController {
       })
   }
 
+  /**
+   * @api {delete} /api/event/:eventId/comment/:id Destroy Comment
+   * @apiName destroyComment
+   * @apiGroup Comment
+   * @apiDescription Mark an Comment as inactive
+   *
+   * @apiParam (URL Params) {Integer} eventId Id of the Event to select within
+   * @apiParam (URL Params) {Integer} id Id of the Comment to destroy
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Dead comment',
+   *    ...
+   *    inactiveAt: '2017-04-05'
+   *   }
+   */
   destroy (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
