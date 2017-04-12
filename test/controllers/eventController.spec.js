@@ -12,6 +12,7 @@ let Sequelize = require('sequelize')
 let db = require('../../src/db.js')
 let ApiErrors = require('../../src/lib/apiErrors')
 import permLevels from '../../src/lib/permissionLevels'
+import eventPrivacyLevels from '../../src/lib/eventPrivacyLevels'
 let config = require('../../config/secrets')
 
 passportStub.install(app)
@@ -122,7 +123,7 @@ describe ('Event Controller', () => {
         description: 'Come join us for a fun time!',
         startTime: moment().add(7, 'days').utc(),
         endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
+        privacy: eventPrivacyLevels.PUBLIC,
         category: 'Music',
         universityId: testUni.id,
         rsoId: testRsos[0].id
@@ -149,7 +150,7 @@ describe ('Event Controller', () => {
         description: 'Come join us for a fun time!',
         startTime: moment().add(7, 'days').utc(),
         endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
+        privacy: eventPrivacyLevels.PUBLIC,
         category: 'Music',
         universityId: testUni.id,
         rsoId: testRsos[0].id
@@ -171,14 +172,14 @@ describe ('Event Controller', () => {
         description: 'Come join us for a fun time!',
         startTime: moment().add(7, 'days').utc(),
         endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
+        privacy: eventPrivacyLevels.PUBLIC,
         category: 'Music',
         universityId: testUni.id,
         rsoId: testRsos[1].id
       }
 
       passportStub.login(testStudent)
-      
+
       chai.request(app)
         .post('/api/event')
         .send(payload)
@@ -195,14 +196,14 @@ describe ('Event Controller', () => {
         description: 'Come join us for a fun time!',
         startTime: moment().add(7, 'days').utc(),
         endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
+        privacy: eventPrivacyLevels.PUBLIC,
         category: 'Music',
         universityId: testUni.id,
         rsoId: testRsos[1].id
       }
 
       passportStub.login(testSadmin)
-      
+
       chai.request(app)
         .post('/api/event')
         .send(payload)
@@ -298,7 +299,7 @@ describe ('Event Controller', () => {
         description: 'Come join us for a fun time!',
         startTime: moment().add(7, 'days').utc(),
         endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
+        privacy: eventPrivacyLevels.PUBLIC,
         category: 'Music',
         universityId: testUni.id,
         rsoId: testRsos[0].id,
@@ -355,7 +356,7 @@ describe ('Event Controller', () => {
   let testIndex = (params, expected, done) => {
     let payload = params
 
-    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event`
+    let url = `/api/university/${payload.universityId}/event`
     chai.request(app)
       .get(url)
       .send(payload)
@@ -363,12 +364,13 @@ describe ('Event Controller', () => {
 
         if (expected.filter) {
           expect(res).to.have.status(expected.status)
+          console.log('TYLER', res.body)
           _.each(expected.filter, (event, index) => {
             _.each(event, (value, key) => {
               if (_.includes(['createdAt', 'updatedAt', 'inactiveAt'], key)) {
-                expect(new Date(res.body[index][key])).to.be.equalDate(value[key])
+                expect(new Date(res.body.dataValues[index][key])).to.be.equalDate(value[key])
               } else {
-                expect(res.body[index][key]).to.be.eql(value[key])
+                expect(res.body.dataValues[index][key]).to.be.eql(value[key])
               }
             })
           })
@@ -381,11 +383,11 @@ describe ('Event Controller', () => {
         done()
       })
   }
-  
+
   let testShow = (params, expected, done) => {
     let payload = params
 
-    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    let url = `/api/university/${payload.universityId}/event/${payload.eventId}`
     chai.request(app)
       .get(url)
       .send(payload)
@@ -413,7 +415,7 @@ describe ('Event Controller', () => {
   let testCreate = (params, expected, done) => {
     let payload = params
 
-    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event`
+    let url = `/api/university/${payload.universityId}/event`
     chai.request(app)
       .post(url)
       .send(payload)
@@ -441,7 +443,7 @@ describe ('Event Controller', () => {
   let testUpdate = (params, expected, done) => {
     let payload = params
 
-    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    let url = `/api/university/${payload.universityId}/event/${payload.eventId}`
     chai.request(app)
       .put(url)
       .send(payload)
@@ -470,7 +472,7 @@ describe ('Event Controller', () => {
   let testDestroy = (params, expected, done) => {
     let payload = params
 
-    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    let url = `/api/university/${payload.universityId}/event/${payload.eventId}`
     chai.request(app)
       .delete(url)
       .send(payload)
