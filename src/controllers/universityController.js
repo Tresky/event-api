@@ -40,8 +40,10 @@ class UniversityController extends ApiController {
     let execute = (explicitIds) => {
       let promises = []
 
-      let payload = { name: params.name }
-      promises.push(db.University.findAll({ where: payload }))
+      if (params.name) {
+        let payload = { name: params.name }
+        promises.push(db.University.findAll({ where: payload }))
+      }
       if (explicitIds && explicitIds.length > 0) {
         promises.push(db.University.findAll({ where: explicitIds }))
       }
