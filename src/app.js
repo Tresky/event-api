@@ -1,16 +1,16 @@
 let express = require('express')
-let session = require('express-session')
-let PgSession = require('connect-pg-simple')(session)
 let path = require('path')
 let http = require('http')
 let bodyParser = require('body-parser')
-let passport = require('passport')
 let expressValidator = require('express-validator')
+let moment = require('moment')
+let jwt = require('jwt-simple')
 
 let ApiError = require('./lib/apiErrors')
 
-let secrets = require('../config/secrets')
-require('../config/passport')
+var db = require('./db.js')
+
+let config = require('../config/secrets')
 
 // Create the Express server
 let app = express()
@@ -26,17 +26,6 @@ app.use(express.static(path.join(__dirname, '/public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
-app.use(session({
-  store: new PgSession({
-    conString: secrets.postgres,
-    tableName: secrets.sessionTable
-  }),
-  secret: secrets.sessionSecret,
-  saveUninitialized: true,
-  resave: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
 
 // Allow for CORS requests to be made to the server. This allows
 // requests to come in from any IP address.
@@ -50,6 +39,10 @@ app.use((req, res, next) => {
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true)
+
+  req.isAuthenticated = () => {
+    return !!req.user
+  }
 
   // Chrome sends special OPTIONS requests before sending a real
   // HTTP request. If we encounter one of these, intercept it and
@@ -67,13 +60,30 @@ app.use((req, res, next) => {
  */
 import UserPermissionsProxy from './lib/userPermissionsProxy.js'
 app.use((req, res, next) => {
-  if (req.isAuthenticated()) {
-    req.permissions = new UserPermissionsProxy()
-    req.permissions.init(req.user)
-      .then(() => { next() })
-  } else {
-    next()
+  if (!(req.headers && req.headers.authorization)) {
+    return next()
   }
+
+  var header = req.headers.authorization.split(' ')
+  var token = header[1]
+  var payload = jwt.decode(token, config.jwtSecret, true)
+  var now = moment().unix()
+
+  if (now > payload.exp) {
+    return next(new ApiError.AuthTokenExpired())
+  }
+
+  db.User.findById(payload.sub)
+    .then((user) => {
+      if (!user) {
+        return next(new ApiError.UserRecordNotFound())
+      }
+
+      req.user = user
+      req.permissions = new UserPermissionsProxy()
+      req.permissions.init(req.user)
+        .then(() => { next() })
+    })
 })
 
 // Import controllers
@@ -103,6 +113,8 @@ app.route('/api/university/:universityId/rso/:id')
 app.route('/api/users/:id')
   .get(userController.show)
   .put(userController.update)
+app.route('/api/current_permissions')
+  .get(userController.permissions)
 
 // Handle general API errors
 app.use(ApiError.handleError)

@@ -1,4 +1,3 @@
-let passport = require('passport')
 let moment = require('moment')
 let jwt = require('jwt-simple')
 let _ = require('lodash')
@@ -41,33 +40,15 @@ class LoginController extends ApiController {
       return next(new ApiError.FailedToLogin(errors))
     }
 
-    passport.authenticate('local', (err, user, info) => {
-      if (!user || err) {
+    req.body.email = req.body.email.toLowerCase()
+    db.User.findUser(req.body.email, req.body.password, (err, user) => {
+      if (err) {
         return next(new ApiError.FailedToLogin(err))
+      } else {
+        delete user.password
+        res.json({ token: generateJwt(user), user: user })
       }
-
-      req.logIn(user, (loginErr) => {
-        if (loginErr) {
-          return next(new ApiError.FailedToLogin(loginErr))
-        }
-        res.json({ token: generateJwt(user) })
-      })
-    })(req, res, next) // <-----
-    // HTTP request, like this POST request (postLogin()) are
-    // handled in Express middleware. This means that all HTTP
-    // requests are intercepted by Express and passed from
-    // middleware function to middleware function until it the
-    // request finds a function that will handle it. This is
-    // essentially allowing the function to pass requests onward
-    // in the event that they can't be handled by passport or
-    // that they need to continue through after passport has
-    // handled them. This is actually a bit complicated, but
-    // hopefully this helps a bit. :)
-  }
-
-  logout (req, res, next) {
-    req.logout()
-    res.locals.user = null
+    })
   }
 
   /**
