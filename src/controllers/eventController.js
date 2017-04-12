@@ -52,6 +52,31 @@ let getAllowedPrivacy = (universityId, userId, rsoId) => {
 }
 
 class EventController extends ApiController {
+  /**
+   * @api {get} /api/university/:universityId/event Select All Events
+   * @apiName getAllEvents
+   * @apiGroup Event
+   * @apiDescription Can request all events based on parameters specified.
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to get select within
+   * @apiParam (Body Params) {String} [name] Name of the event
+   * @apiParam (Body Params) {Integer} [privacy] Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {Integer} [category] Category the event is in
+   * @apiParam (Body Params) {Integer} [createdById] Query by who created the event
+   * @apiParam (Body Params) {Integer} [rsoId] Query the RSO the event is associated with
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   [{
+   *    id: 2,
+   *    name: 'Cool Event',
+   *    ...
+   *   }, {
+   *    id: 5,
+   *    name: 'Cooler Event',
+   *    ...
+   *   }]
+   */
   index (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -62,13 +87,8 @@ class EventController extends ApiController {
     let params = _.merge(
       helpers.requireParams([
         'name',
-        'description',
-        'startTime',
-        'endTime',
         'privacy',
         'category',
-        'contactPhone',
-        'contactEmail',
         'createdById',
         'rsoId'
       ], req.body, true),
@@ -94,6 +114,23 @@ class EventController extends ApiController {
       })
   }
 
+  /**
+   * @api {get} /api/university/:universityId/event/:id Select Single Event
+   * @apiName getEvent
+   * @apiGroup Event
+   * @apiDescription Returns a single Event record with the specified ID
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select from
+   * @apiParam (URL Params) {Integer} id Id of the Event record to fetch
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 2,
+   *    name: 'Cool Event',
+   *    ...
+   *   }
+   */
   show (req, res, next) {
     // Make sure that the user is logged in
     if (!req.isAuthenticated()) {
@@ -121,6 +158,29 @@ class EventController extends ApiController {
       })
   }
 
+  /**
+   * @api {post} /api/university/:universityId/event/:id Create Event
+   * @apiName createEvent
+   * @apiGroup Event
+   * @apiDescription Creates a new Event record with the given data
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to post in
+   * @apiParam (Body Params) {String} {name} Name of the event
+   * @apiParam (Body Params) {String} {description} Description of the event
+   * @apiParam (Body Params) {Date} {startTime} Time that the event starts
+   * @apiParam (Body Params) {Date} {endTime} Time that the event ends
+   * @apiParam (Body Params) {Integer} {privacy} Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {String} [contactPhone] Phone number to call for info
+   * @apiParam (Body Params) {String} [contactEmail] Email to message for info
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'New event',
+   *    ...
+   *   }
+   */
   create (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -178,6 +238,30 @@ class EventController extends ApiController {
     }
   }
 
+  /**
+   * @api {put} /api/university/:universityId/event/:id Update Event
+   * @apiName updateComment
+   * @apiGroup Event
+   * @apiDescription Update an existing Event record with the given data
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
+   * @apiParam (URL Params) {Integer} id Id of the Event to update
+   * @apiParam (Body Params) {String} [name] Name of the event
+   * @apiParam (Body Params) {String} [description] Description of the event
+   * @apiParam (Body Params) {Date} [startTime] Time that the event starts
+   * @apiParam (Body Params) {Date} [endTime] Time that the event ends
+   * @apiParam (Body Params) {Integer} [privacy] Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {String} [contactPhone] Phone number to call for info
+   * @apiParam (Body Params) {String} [contactEmail] Email to message for info
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Face Painting',
+   *    ...
+   *   }
+   */
   update (req, res, next) {
     // Make sure that the user is logged in
     if (!req.isAuthenticated()) {
@@ -226,6 +310,24 @@ class EventController extends ApiController {
     })
   }
 
+  /**
+   * @api {delete} /api/university/:universityId/event/:id Destroy Event
+   * @apiName destroyEvent
+   * @apiGroup Event
+   * @apiDescription Mark an Event as inactive
+   *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to look in
+   * @apiParam (URL Params) {Integer} id Id of the Event to destroy
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    name: 'Dead event',
+   *    ...
+   *    inactiveAt: '2017-04-05'
+   *   }
+   */
   destroy (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
