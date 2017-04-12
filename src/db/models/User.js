@@ -187,14 +187,23 @@ module.exports = (db, DataTypes) => {
       user.email = user.email.toLowerCase()
     }
 
+    // fn(null, user)
+
     if (user.changed('password')) {
+    //   console.log('HOOK 0')
+    //   // return new db.Promise((resolve, reject) => {
+    //   console.log('HOOK 1')
       User.encryptPassword(user.password, (hash, err) => {
         user.password = hash
+    //     console.log('HOOK 2', user)
         fn(null, user)
       })
-      return
+    //   // })
+    } else {
+    //   console.log('HOOK 3')
+      fn(null, user)
+    //   // return db.Promise.resolve(user)
     }
-    fn(null, user)
   }
 
   let hooks = {
