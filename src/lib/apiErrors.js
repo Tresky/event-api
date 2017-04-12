@@ -212,6 +212,16 @@ exports.UserNotInRso = class extends ApiError {
     super('User not in RSO', 602, 403, raw)
   }
 }
+
+/**
+ * CommentController Errors
+ */
+exports.NoCommentRecordExists = class extends ApiError {
+  constructor (raw) {
+    super('Comment record does not exist', 800, 400, raw)
+  }
+}
+
 /**
  * Generates the `body` of an error based
  * on the ApiError object specified.

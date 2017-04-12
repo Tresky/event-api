@@ -317,6 +317,7 @@ class RsoController extends ApiController {
    *    id: 4,
    *    name: 'Tech Knights',
    *    ...
+   *    inactiveAt: '2017-04-05'
    *   }
    */
   destroy (req, res, next) {
