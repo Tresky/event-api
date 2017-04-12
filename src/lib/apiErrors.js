@@ -74,6 +74,12 @@ module.exports.InvalidPermissionForAction = class extends ApiError {
   }
 }
 
+module.exports.AuthTokenExpired = class extends ApiError {
+  constructor (raw) {
+    super('Authentication token has expired; please re-log in', 104, 401, raw)
+  }
+}
+
 /**
  * LoginController Errors
  */

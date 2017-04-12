@@ -106,6 +106,15 @@ class UserController extends ApiController {
         })
     })
   }
+
+  permissions (req, res, next) {
+    // Make sure that the user is logged in.
+    if (!req.isAuthenticated()) {
+      return next(new ApiError.UserNotAuthenticated())
+    }
+
+    res.json(req.permissions)
+  }
 }
 
 module.exports = new UserController()
