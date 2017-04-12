@@ -47,6 +47,9 @@ class UniversityController extends ApiController {
       if (explicitIds && explicitIds.length > 0) {
         promises.push(db.University.findAll({ where: explicitIds }))
       }
+      if (!explicitIds && !params.name) {
+        promises.push(db.University.findAll())
+      }
 
       Promise.all(promises)
       .then((results) => {
