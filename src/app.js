@@ -81,6 +81,7 @@ let loginController = require('./controllers/loginController')
 let rsoController = require('./controllers/rsoController')
 let universityController = require('./controllers/universityController')
 let userController = require('./controllers/usersController')
+let eventController = require('./controllers/eventController')
 
 // Define API routes
 app.route('/api/auth/login')
@@ -103,6 +104,13 @@ app.route('/api/university/:universityId/rso/:id')
 app.route('/api/users/:id')
   .get(userController.show)
   .put(userController.update)
+app.route('/api/university/:universityId/rso/:rsoId/event')
+  .get(eventController.index)
+  .put(eventController.create)
+app.route('/api/university/:universityId/rso/:rsoId/event/:id')
+  .get(eventController.show)
+  .put(eventController.update)
+  .delete(eventController.destroy)
 
 // Handle general API errors
 app.use(ApiError.handleError)

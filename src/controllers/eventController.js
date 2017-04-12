@@ -2,13 +2,11 @@ let moment = require('moment')
 let _ = require('lodash')
 
 let db = require('../db')
-// let config = require('../../config/secrets')
 let helpers = require('../lib/controllerHelpers')
 
 let ApiController = require('./apiController')
 
 let ApiError = require('../lib/apiErrors')
-let helpers = require('../lib/controllerHelpers')
 
 import eventPrivacyLevels from '../lib/eventPrivacyLevels'
 
@@ -42,6 +40,9 @@ let getAllowedPrivacy = (universityId, userId, rsoId) => {
         }
         resolve(allowedPrivacy)
       })
+      .catch((res) => {
+        console.log("TYLER", res)
+      })
   })
 }
 
@@ -66,7 +67,6 @@ class EventController extends ApiController {
         'createdById'
       ], req.body, true),
       helpers.requireParams([
-        'id',
         'universityId',
         'rsoId',
       ], req.params),
@@ -125,46 +125,55 @@ class EventController extends ApiController {
     }
 
     //make sure user is member of rso
-    if(!Membership.count({ where: { userId: userId, rsoId: rsoId, inactiveAt: null } })) {
-      return next(new ApiError.UserNotInRso())
-    }
+    Membership.count({
+      where: { userId: userId, rsoId: rsoId, inactiveAt: null }
+    }).then((count) => {
+        if (!count) {
+          next(new ApiError.UserNotInRso())
+        } else {
+          performCreate();
+        }
+    }) 
 
-    // Get the required and optional parameters
-    let params = _.merge(
-      helpers.requireParams([
-        'name',
-        'description',
-        'startTime',
-        'endTime',
-        'privacy',
-        'category'
-      ], req.body),
-      helpers.requireParams([
-        'universityId',
-        'rsoId'
-      ], req.params),
-      helpers.requireParams([
-        'contactPhone',
-        'contactEmail'
-      ], req.body, true)
-    )
+    let performCreate = () => {
 
-    // Make sure the authenticated user has permission
-    // to create an event in this RSO.
-    if (!req.permissions.userCan('events.create', 'rso', params.rsoId)) {
-      return next(new ApiError.InvalidPermissionForAction({ action: 'events.create', userId: req.user.id }))
-    }
+      // Get the required and optional parameters
+      let params = _.merge(
+        helpers.requireParams([
+          'name',
+          'description',
+          'startTime',
+          'endTime',
+          'privacy',
+          'category'
+        ], req.body),
+        helpers.requireParams([
+          'universityId',
+          'rsoId'
+        ], req.params),
+        helpers.requireParams([
+          'contactPhone',
+          'contactEmail'
+        ], req.body, true)
+      )
 
-    // Who is creating this event?
-    params.createdById = req.user.id
+      // Make sure the authenticated user has permission
+      // to create an event in this RSO.
+      if (!req.permissions.userCan('events.create', 'rso', params.rsoId)) {
+        return next(new ApiError.InvalidPermissionForAction({ action: 'events.create', userId: req.user.id }))
+      }
 
-    let payload = params
-    db.Event.create(payload)
-      .then((evt) => {
-        res.json(evt)
-      }, (response) => {
-        console.log('Failed to create event record', response)
-      })
+      // Who is creating this event?
+      params.createdById = req.user.id
+
+      let payload = params
+      db.Event.create(payload)
+        .then((evt) => {
+          res.json(evt)
+        }, (response) => {
+          console.log('Failed to create event record', response)
+        })
+      }
   }
 
   update (req, res, next) {

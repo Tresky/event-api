@@ -1,6 +1,7 @@
 let mocha = require('mocha')
 let chai = require('chai')
 let chaiHttp = require('chai-http')
+let chaiDate = require('chai-datetime')
 let _ = require('lodash')
 let moment = require('moment')
 
@@ -9,66 +10,47 @@ let passportStub = require('passport-stub')
 let app = require('../../src/app.js')
 let Sequelize = require('sequelize')
 let db = require('../../src/db.js')
+let ApiErrors = require('../../src/lib/apiErrors')
+import permLevels from '../../src/lib/permissionLevels'
+let config = require('../../config/secrets')
 
 passportStub.install(app)
 
 let should = chai.should
 let expect = chai.expect
 chai.use(chaiHttp)
+chai.use(chaiDate)
 
 describe ('Event Controller', () => {
   let testUni = null
-  let testRso = null
-  let testUser = null
-  let testNotMember = null
-  let testNoPermissionUser = null
-  let memberships = []
+  let testSadmin = null
+  let testAdmin = null
+  let testStudent = null
+  let testRsos = null
+  let testEvents = null
 
-  // Create a User record to use throughout all tests
-  // This represents the 'super admin' the can create
-  // and manage a University.
   before ((done) => {
-    db.University.create({
-      name: 'Testing University',
-      description: 'My description'
-    }).then((uni) => {
-      testUni = uni
-      db.User.create({
-        firstName: 'Tyler',
-        lastName: 'Petresky',
-        email: 'eventtest@test.com',
-        password: 'password',
-        universityId: testUni.id
-      }).then((user) => {
-        testUser = user
-        db.Membership.create({
-          userId: testUser.id,
-          universityId: testUni.id,
-          rsoId: null,
-          permissionLevel: 1
-        }).then((memb) => {
-          memberships = _.concat(memberships, [memb])
+    let promises = _.concat([],
+      db.University.findOne({ where: { name: 'University of Tyler' } }),
+      db.User.findOne({ where: { email: 'sadmin@test.com' } }),
+      db.User.findOne({ where: { email: 'admin@test.com' } }),
+      db.User.findOne({ where: { email: 'student@test.com' } }),
+      db.Rso.findAll({ where: { inactiveAt: null } }),
+      db.Event.findAll({ where: { inactiveAt: null } })
+    )
 
-          db.Rso.create({
-            name: 'Musical People',
-            description: 'We like music!',
-            universityId: testUni.id,
-            createdById: testUser.id
-          }).then((rso) => {
-            testRso = rso
-            db.Membership.create({
-              userId: testUser.id,
-              universityId: testUni.id,
-              rsoId: testRso.id,
-              permissionLevel: 2
-            }).then((memb) => {
-              memberships = _.concat(memberships, [memb])
-              done()
-            })
-          })
-        })
+    Promise.all(promises)
+      .then((results) => {
+        testUni = results[0]
+        testSadmin = results[1]
+        testAdmin = results[2]
+        testStudent = results[3]
+        testRsos = results[4]
+        testEvents = results[5]
+
+        console.log('printing test events', testEvents)
+        done()
       })
-    })
   }) // #before()
 
   describe ('eventController#index', () => {
@@ -76,23 +58,22 @@ describe ('Event Controller', () => {
     it ('successfully queries all events', (done) => {
       let params = {
         universityId: testUni.id,
-        rsoId: testRso.id
+
       }
       let expect = {
         status: 200,
         filter: _.filter(testEvents, (event) => {
-          return event.rsoId == params.rsoId
+          return event.universityId == params.universityId
         })
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testSadmin)
       testIndex(params, expect, done)
     })
 
     it ('fails to query events if user not logged in', (done) => {
       let params = {
         universityId: testUni.id,
-        rsoId: testRso.id
       }
       let expect = {
         error: new ApiErrors.UserNotAuthenticated()
@@ -106,7 +87,7 @@ describe ('Event Controller', () => {
     it ('successfully queries for an event id', (done) => {
       let params = {
         universityId: testUni.id,
-        rsoId: testRso.id,
+        rsoId: testRsos[0].id,
         eventId: testEvents[0].id
       }
       let expect = {
@@ -114,14 +95,14 @@ describe ('Event Controller', () => {
         filter: testEvents[0]
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testStudent)
       testShow(params, expect, done)
     })
 
     it ('fails to query event if user not logged in', (done) => {
       let params = {
         universityId: testUni.id,
-        rsoId: testRso.id,
+        rsoId: testRsos[0].id,
         eventId: testEvents[0].id
       }
       let expect = {
@@ -144,10 +125,10 @@ describe ('Event Controller', () => {
         privacy: 'public',
         category: 'Music',
         universityId: testUni.id,
-        rsoId: testRso.id
+        rsoId: testRsos[0].id
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testAdmin)
 
       chai.request(app)
         .post('/api/event')
@@ -171,7 +152,7 @@ describe ('Event Controller', () => {
         privacy: 'public',
         category: 'Music',
         universityId: testUni.id,
-        rsoId: testRso.id
+        rsoId: testRsos[0].id
       }
 
       chai.request(app)
@@ -193,10 +174,10 @@ describe ('Event Controller', () => {
         privacy: 'public',
         category: 'Music',
         universityId: testUni.id,
-        rsoId: testRso.id
+        rsoId: testRsos[1].id
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testStudent)
       
       chai.request(app)
         .post('/api/event')
@@ -217,10 +198,10 @@ describe ('Event Controller', () => {
         privacy: 'public',
         category: 'Music',
         universityId: testUni.id,
-        rsoId: testRso.id
+        rsoId: testRsos[1].id
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testSadmin)
       
       chai.request(app)
         .post('/api/event')
@@ -252,60 +233,37 @@ describe ('Event Controller', () => {
   })
 
   describe ('eventController#update', () => {
-    let updateEvent = null
-
-    beforeEach((done) => {
-      passportStub.login(testUser)
-      db.Event.create({
-        name: 'Open Mic Night',
-        description: 'Come join us for a fun time!',
-        startTime: moment().add(7, 'days').utc(),
-        endTime: moment().add(8, 'days').utc(),
-        privacy: 'public',
-        category: 'Music',
-        universityId: testUni.id,
-        rsoId: testRso.id
-      }).then((event) => {
-        updateEvent = event
-        testUser.addEvent(updateEvent, {
-          permissionLevel: permLevels.ADMIN,
-          universityId: testUni.id,
-          rsoId: testRso.id
-        }).then(() => {
-          passportStub.logout()
-          done()
-        }).catch((response) => { console.log('check', response, permLevels)})
-      })
-    })
+   // let updateEvent = testEvents[0]
+    //let noUpdateEvent = testEvents[1]
 
     it ('successfully updates an event when logged in as an admin', (done) => {
       let payload = {
-        eventId: updateEvent.id,
+        eventId: testEvents[0].id,
         universityId: testUni.id,
-        rsoId: testRso.id,
+        rsoId: testRsos[0].id,
         name: 'My Updated Event'
       }
       let expect = {
         status: 200,
         filter: {
-          eventId: updateEvent.id,
+          eventId: testEvents[0].id,
           universityId: testUni.id,
-          rsoId: testRso.id,
+          rsoId: testRsos[0].id,
           name: 'My Updated Event',
-          description: updateEvent.description,
-          createdById: testUser.id
+          description: testEvents[0].description,
+          createdById: testSadmin.id
         }
       }
 
-      passportStub.login(testUser)
+      passportStub.login(testSadmin)
       testUpdate(payload, expect, done)
     })
 
     it ('fails to update an event when not logged in', (done) => {
       let payload = {
-        eventId: updateEvent.id,
+        eventId: testEvents[0].id,
         universityId: testUni.id,
-        rsoId: testRso.id,
+        rsoId: testRsos[0].id,
         name: 'My Updated Event'
       }
       let expect = {
@@ -317,21 +275,17 @@ describe ('Event Controller', () => {
 
     it ('fails to update an event when not an admin in the event', (done) => {
       let payload = {
-        eventId: updateEvent.id,
+        eventId: testEvents[1].id,
         universityId: testUni.id,
-        rsoId: testRso.id,
+        rsoId: testRsos[1].id,
         name: 'My Updated Event'
       }
       let expect = {
         error: new ApiErrors.InvalidPermissionForAction()
       }
 
-      passportStub.login(testUser) //should be testNoPermissionUser?
+      passportStub.login(testStudent)
       testUpdate(payload, expect, done)
-    })
-
-    afterEach((done) => {
-      updateEvent.destroy().then(() => { done() })
     })
   })
 
@@ -347,8 +301,8 @@ describe ('Event Controller', () => {
         privacy: 'public',
         category: 'Music',
         universityId: testUni.id,
-        rsoId: testRso.id,
-        createdById: testUser.id
+        rsoId: testRsos[0].id,
+        createdById: testSadmin.id
       }).then((evt) => {
         destroyEvent = evt
         done()
@@ -363,7 +317,7 @@ describe ('Event Controller', () => {
       passportStub.login(testUser)
 
       chai.request(app)
-        .delete('/api/event/:id')
+        .delete('/api/university/:universityId/event/:id')
         .send(payload)
         .end((err, res) => {
           expect(res).to.have.status(200)
@@ -398,23 +352,148 @@ describe ('Event Controller', () => {
     })
   })
 
+  let testIndex = (params, expected, done) => {
+    let payload = params
 
-  after((done) => {
-    let promises = _.concat([],
-      db.University.destroy({ where: { id: testUni.id } }),
-      db.Rso.destroy({ where: { id: testRso.id } }),
-      db.User.destroy({ where: { id: testUser.id } })
-    )
+    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event`
+    chai.request(app)
+      .get(url)
+      .send(payload)
+      .end((err, res) => {
 
-    _.each(memberships, (memb) => {
-      promises = _.concat(promises,
-        db.Membership.destroy({ where: { id: memb.id } })
-      )
-    })
+        if (expected.filter) {
+          expect(res).to.have.status(expected.status)
+          _.each(expected.filter, (event, index) => {
+            _.each(event, (value, key) => {
+              if (_.includes(['createdAt', 'updatedAt', 'inactiveAt'], key)) {
+                expect(new Date(res.body[index][key])).to.be.equalDate(value[key])
+              } else {
+                expect(res.body[index][key]).to.be.eql(value[key])
+              }
+            })
+          })
+        } else {
+          expect(res).to.have.status(expected.error.status)
+          expect(res.body.errorCode).to.be.eql(expected.error.code)
+        }
 
-    Promise.all(promises)
-      .then(() => {
+        passportStub.logout()
         done()
       })
-  })
+  }
+  
+  let testShow = (params, expected, done) => {
+    let payload = params
+
+    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    chai.request(app)
+      .get(url)
+      .send(payload)
+      .end((err, res) => {
+
+        if (expected.filter) {
+          expect(res).to.have.status(expected.status)
+          _.each(expected.filter, (value, key) => {
+            if (_.includes(['createdAt', 'updatedAt', 'inactiveAt'], key)) {
+              expect(new Date(res.body[key])).to.be.equalDate(value[key])
+            } else {
+              expect(res.body[key]).to.be.eql(value[key])
+            }
+          })
+        } else {
+          expect(res).to.have.status(expected.error.status)
+          expect(res.body.errorCode).to.be.eql(expected.error.code)
+        }
+
+        passportStub.logout()
+        done()
+      })
+  }
+
+  let testCreate = (params, expected, done) => {
+    let payload = params
+
+    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event`
+    chai.request(app)
+      .post(url)
+      .send(payload)
+      .end((err, res) => {
+        passportStub.logout()
+        if (expected.filter) {
+          expect(res).to.have.status(expected.status)
+          _.each(expected.filter, (value, key) => {
+            expect(res.body[key]).to.be.eql(value)
+          })
+
+          let event = db.Event.build(res.body)
+          event.destroy()
+            .then((response) => {
+              done()
+            })
+        } else {
+          expect(res).to.have.status(expected.error.status)
+          expect(res.body.errorCode).to.be.eql(expected.error.code)
+          done()
+        }
+      })
+  }
+
+  let testUpdate = (params, expected, done) => {
+    let payload = params
+
+    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    chai.request(app)
+      .put(url)
+      .send(payload)
+      .end((err, res) => {
+        if (expected.filter) {
+          expect(res).to.have.status(expected.status)
+          _.each(expected.filter, (value, key) => {
+            expect(res.body[key]).to.be.eql(value)
+          })
+
+          let event = db.Event.build(res.body)
+          event.destroy()
+            .then(() => {
+              passportStub.logout()
+              done()
+            })
+        } else {
+          expect(res).to.have.status(expected.error.status)
+          expect(res.body.errorCode).to.be.eql(expected.error.code)
+          passportStub.logout()
+          done()
+        }
+      })
+  }
+
+  let testDestroy = (params, expected, done) => {
+    let payload = params
+
+    let url = `/api/university/${payload.universityId}/rso/${payload.rsoId}/event/${payload.eventId}`
+    chai.request(app)
+      .delete(url)
+      .send(payload)
+      .end((err, res) => {
+        if (expected.filter) {
+          expect(res).to.have.status(expected.status)
+          _.each(expected.filter, (value, key) => {
+            expect(res.body[key]).to.be.eql(value)
+          })
+          expect(res.body.inactiveAt).to.not.be.null
+
+          let event = db.Event.build(res.body)
+          event.destroy()
+            .then(() => {
+              passportStub.logout()
+              done()
+            })
+        } else {
+          expect(res).to.have.status(expected.error.status)
+          expect(res.body.errorCode).to.be.eql(expected.error.code)
+          passportStub.logout()
+          done()
+        }
+      })
+  }
 })
