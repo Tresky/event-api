@@ -194,7 +194,6 @@ exports.NoRsoInUniversity = class extends ApiError {
 /**
   * EventController Errors
   */
-
 exports.NoEventinRso = class extends ApiError {
   constructor (raw) {
     super('RSO lacks event with given ID', 600, 400, raw)
@@ -212,6 +211,16 @@ exports.UserNotInRso = class extends ApiError {
     super('User not in RSO', 602, 403, raw)
   }
 }
+
+/**
+ * SubscriptionController Errors
+ */
+exports.UserAlreadySubscribedToRso = class extends ApiError {
+  constructor (raw) {
+    super('Authenticated user is already subscribed to this RSO', 700, 400, raw)
+  }
+}
+
 /**
  * Generates the `body` of an error based
  * on the ApiError object specified.
