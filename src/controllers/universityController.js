@@ -37,15 +37,6 @@ class UniversityController extends ApiController {
       'userId'
     ], req.body, true)
 
-    if (params.userId) {
-      db.Membership.findAll({ where: { userId: params.userId, rsoId: null } })
-        .then((membs) => {
-          execute(_.map(membs, 'universityId'))
-        })
-    } else {
-      execute()
-    }
-
     let execute = (explicitIds) => {
       let promises = []
 
@@ -56,9 +47,18 @@ class UniversityController extends ApiController {
       }
 
       Promise.all(promises)
-        .then((results) => {
-          res.json(_.unionBy(results[0], results[1], 'id'))
+      .then((results) => {
+        res.json(_.unionBy(results[0], results[1], 'id'))
+      })
+    }
+
+    if (params.userId) {
+      db.Membership.findAll({ where: { userId: params.userId, rsoId: null } })
+        .then((membs) => {
+          execute(_.map(membs, 'universityId'))
         })
+    } else {
+      execute()
     }
   }
 
