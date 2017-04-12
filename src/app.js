@@ -87,6 +87,7 @@ app.use((req, res, next) => {
 })
 
 // Import controllers
+let eventController = require('./controllers/eventController')
 let loginController = require('./controllers/loginController')
 let rsoController = require('./controllers/rsoController')
 let universityController = require('./controllers/universityController')
@@ -116,7 +117,7 @@ app.route('/api/users/:id')
   .put(userController.update)
 app.route('/api/university/:universityId/event')
   .get(eventController.index)
-  .put(eventController.create)
+  .post(eventController.create)
 app.route('/api/university/:universityId/event/:id')
   .get(eventController.show)
   .put(eventController.update)
