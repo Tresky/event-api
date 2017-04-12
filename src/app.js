@@ -87,6 +87,7 @@ app.use((req, res, next) => {
 })
 
 // Import controllers
+let commentController = require('./controllers/commentController')
 let eventController = require('./controllers/eventController')
 let loginController = require('./controllers/loginController')
 let rsoController = require('./controllers/rsoController')
@@ -127,6 +128,13 @@ app.route('/api/university/:universityId/event/:id')
   .get(eventController.show)
   .put(eventController.update)
   .delete(eventController.destroy)
+app.route('/api/university/:universityId/event/:eventId/comment')
+  .get(commentController.index)
+  .post(commentController.create)
+app.route('/api/university/:universityId/event/:eventId/comment/:id')
+  .get(commentController.show)
+  .put(commentController.update)
+  .delete(commentController.destroy)
 app.route('/api/current_permissions')
   .get(userController.permissions)
 
