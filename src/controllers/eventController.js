@@ -46,7 +46,7 @@ let getAllowedPrivacy = (universityId, userId, rsoId) => {
         resolve(allowedPrivacy)
       })
       .catch((res) => {
-        console.log('Failed to determine privacy leve', res)
+        console.log('Failed to determine privacy level', res)
       })
   })
 }
@@ -106,18 +106,16 @@ class EventController extends ApiController {
 
     getAllowedPrivacy(params.universityId, req.user.id)
       .then((privacy) => {
-        let payload = params
-        db.Event.fineOne({
-          where: payload
-        }).then((rso) => {
-          if (privacy.rso >= privacy) {
-            res.json(rso)
-          } else {
-            return next(new ApiError.EventPrivacyRestriction())
-          }
-        }, (response) => {
-          return next(new ApiError.NoEventinRso({ action: 'event#show', params: params, response: response }))
-        })
+        db.Event.findById(params.id)
+          .then((evt) => {
+            if (!evt) {
+              return next(new ApiError.NoEventinRso({ action: 'event#show', params: params }))
+            } else if (evt.privacy < privacy) {
+              return next(new ApiError.EventPrivacyRestriction())
+            } else {
+              res.json(evt)
+            }
+          })
       })
   }
 

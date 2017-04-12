@@ -15,7 +15,8 @@ class UniversityController extends ApiController {
    * @apiDescription Select all Universities matching a query; if no optional parameters
    *                 are specified, a list of all Universities will be returned.
    *
-   * @apiParam (Body Params) {String} [name] Name of the University to select
+   * @apiParam (Body Params) {String}  [name] Name of the University to select
+   * @apiParam (Body Params) {Integer} [userId] Id of the user you want to get universities for
    *
    * @apiSuccessExample {json} Success-Response:
    *   HTTP/1.1 200 OK
@@ -32,15 +33,33 @@ class UniversityController extends ApiController {
   index (req, res, next) {
     // Get the required parameters
     let params = helpers.requireParams([
-      'name'
+      'name',
+      'userId'
     ], req.body, true)
 
-    let payload = params
-    db.University.findAll({
-      where: payload
-    }).then((unis) => {
-      res.json(unis)
-    })
+    if (params.userId) {
+      db.Membership.findAll({ where: { userId: params.userId, rsoId: null } })
+        .then((membs) => {
+          execute(_.map(membs, 'universityId'))
+        })
+    } else {
+      execute()
+    }
+
+    let execute = (explicitIds) => {
+      let promises = []
+
+      let payload = { name: params.name }
+      promises.push(db.University.findAll({ where: payload }))
+      if (explicitIds && explicitIds.length > 0) {
+        promises.push(db.University.findAll({ where: explicitIds }))
+      }
+
+      Promise.all(promises)
+        .then((results) => {
+          res.json(_.unionBy(results[0], results[1], 'id'))
+        })
+    }
   }
 
   /**
