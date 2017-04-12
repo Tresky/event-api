@@ -165,11 +165,11 @@ class EventController extends ApiController {
    * @apiDescription Creates a new Event record with the given data
    *
    * @apiParam (URL Params) {Integer} universityId Id of the University to post in
-   * @apiParam (Body Params) {String} {name} Name of the event
-   * @apiParam (Body Params) {String} {description} Description of the event
-   * @apiParam (Body Params) {Date} {startTime} Time that the event starts
-   * @apiParam (Body Params) {Date} {endTime} Time that the event ends
-   * @apiParam (Body Params) {Integer} {privacy} Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {String} name Name of the event
+   * @apiParam (Body Params) {String} description Description of the event
+   * @apiParam (Body Params) {Date} startTime Time that the event starts
+   * @apiParam (Body Params) {Date} endTime Time that the event ends
+   * @apiParam (Body Params) {Integer} privacy Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
    * @apiParam (Body Params) {String} [contactPhone] Phone number to call for info
    * @apiParam (Body Params) {String} [contactEmail] Email to message for info
    *
