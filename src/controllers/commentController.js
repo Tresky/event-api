@@ -10,12 +10,13 @@ let ApiError = require('../lib/apiErrors')
 
 class CommentController extends ApiController {
   /**
-   * @api {get} /api/event/:eventId/comment Select Comments on Event
+   * @api {get} /api/university/:universityId/event/:eventId/comment Select Comments on Event
    * @apiName getAllComments
    * @apiGroup Comment
    * @apiDescription Can request comments that are attached to an event. There
    *                 are no body parameters for this function; only URL parameters.
    *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to get select within
    * @apiParam (URL Params) {Integer} eventId Id of the event to get comments for
    *
    * @apiSuccessExample {json} Success-Response:
@@ -52,11 +53,12 @@ class CommentController extends ApiController {
   }
 
   /**
-   * @api {get} /api/event/:eventId/comment/:id Select Single Comment
+   * @api {get} /api/university/:universityId/event/:eventId/comment/:id Select Single Comment
    * @apiName getComment
    * @apiGroup Comment
    * @apiDescription Returns a single Comment record with the specified ID
    *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select from
    * @apiParam (URL Params) {Integer} eventId Id of the event to select from
    * @apiParam (URL Params) {Integer} id Id of the Comment record to fetch
    *
@@ -91,11 +93,12 @@ class CommentController extends ApiController {
   }
 
   /**
-   * @api {post} /api/event/:eventId/comment Create Comment
+   * @api {post} /api/university/:universityId/event/:eventId/comment Create Comment
    * @apiName createComment
    * @apiGroup Comment
    * @apiDescription Creates a new Comment record with the given data
    *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to post in
    * @apiParam (URL Params) {Integer} eventId Id of the Event to post to
    * @apiParam (Body Params) {String} message Text of the message of the comment
    *
@@ -142,11 +145,12 @@ class CommentController extends ApiController {
   }
 
   /**
-   * @api {put} /api/event/:eventId/coment/:id Update Comment
+   * @api {put} /api/university/:universityId/event/:eventId/coment/:id Update Comment
    * @apiName updateComment
    * @apiGroup Comment
    * @apiDescription Update an existing Comment record with the given data
    *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
    * @apiParam (URL Params) {Integer} eventId Id of the Comment to select within
    * @apiParam (URL Params) {Integer} id Id of the Comment to update
    * @apiParam (Body Params) {String} [message] Message text to update
@@ -196,11 +200,12 @@ class CommentController extends ApiController {
   }
 
   /**
-   * @api {delete} /api/event/:eventId/comment/:id Destroy Comment
+   * @api {delete} /api/university/:universityId/event/:eventId/comment/:id Destroy Comment
    * @apiName destroyComment
    * @apiGroup Comment
    * @apiDescription Mark an Comment as inactive
    *
+   * @apiParam (URL Params) {Integer} universityId Id of the University to select within
    * @apiParam (URL Params) {Integer} eventId Id of the Event to select within
    * @apiParam (URL Params) {Integer} id Id of the Comment to destroy
    *
