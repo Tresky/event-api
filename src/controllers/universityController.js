@@ -37,6 +37,26 @@ class UniversityController extends ApiController {
       'userId'
     ], req.body, true)
 
+    let execute = (explicitIds) => {
+      let promises = []
+
+      if (params.name) {
+        let payload = { name: params.name }
+        promises.push(db.University.findAll({ where: payload }))
+      }
+      if (explicitIds && explicitIds.length > 0) {
+        promises.push(db.University.findAll({ where: explicitIds }))
+      }
+      if (!explicitIds && !params.name) {
+        promises.push(db.University.findAll())
+      }
+
+      Promise.all(promises)
+      .then((results) => {
+        res.json(_.unionBy(results[0], results[1], 'id'))
+      })
+    }
+
     if (params.userId) {
       db.Membership.findAll({ where: { userId: params.userId, rsoId: null } })
         .then((membs) => {
@@ -44,21 +64,6 @@ class UniversityController extends ApiController {
         })
     } else {
       execute()
-    }
-
-    let execute = (explicitIds) => {
-      let promises = []
-
-      let payload = { name: params.name }
-      promises.push(db.University.findAll({ where: payload }))
-      if (explicitIds && explicitIds.length > 0) {
-        promises.push(db.University.findAll({ where: explicitIds }))
-      }
-
-      Promise.all(promises)
-        .then((results) => {
-          res.json(_.unionBy(results[0], results[1], 'id'))
-        })
     }
   }
 
