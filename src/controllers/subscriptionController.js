@@ -9,6 +9,27 @@ let ApiController = require('./apiController')
 let ApiError = require('../lib/apiErrors')
 
 class SubscriptionController extends ApiController {
+  /**
+   * @api {get} /api/subscription Select Subscriptions
+   * @apiName getAllSubscription
+   * @apiGroup Subscription
+   * @apiDescription Can query for subscriptions based on userId and/or rsoId.
+   *
+   * @apiParam (Body Params) {Integer} userId Id of the user to query subs for
+   * @apiParam (Body Params) {Integer} rsoId Id of the rso to query subs for
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   [{
+   *    id: 2,
+   *    userId: 1,
+   *    ...
+   *   }, {
+   *    id: 5,
+   *    userId: 2,
+   *    ...
+   *   }]
+   */
   index (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -35,6 +56,23 @@ class SubscriptionController extends ApiController {
     })
   }
 
+  /**
+   * @api {post} /api/subscription Create Subscription
+   * @apiName createSubscription
+   * @apiGroup Subscription
+   * @apiDescription Creates a new Subscription record to subscribe a user to an RSO.
+   *                 The user being subscribed will be the current logged-in user.
+   *
+   * @apiParam (Body Params) {Integer} rsoID Id of the RSO to subscribe to
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    userId: 3,
+   *    ...
+   *   }
+   */
   create (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
@@ -71,6 +109,23 @@ class SubscriptionController extends ApiController {
     }
   }
 
+  /**
+   * @api {delete} /api/subscription/:id Destroy Subscription
+   * @apiName destroySubscription
+   * @apiGroup Subscription
+   * @apiDescription Mark a Subscription as inactive
+   *
+   * @apiParam (URL Params) {Integer} id Id of the Subscription to destroy
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *   HTTP/1.1 200 OK
+   *   {
+   *    id: 4,
+   *    userId: 6,
+   *    ...
+   *    inactiveAt: 2017-05-06
+   *   }
+   */
   destroy (req, res, next) {
     // Make sure that the user is logged in.
     if (!req.isAuthenticated()) {
