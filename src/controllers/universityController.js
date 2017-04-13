@@ -35,7 +35,7 @@ class UniversityController extends ApiController {
     let params = helpers.requireParams([
       'name',
       'userId'
-    ], req.body, true)
+    ], req.query, true)
 
     let execute = (explicitIds) => {
       let promises = []
@@ -45,7 +45,11 @@ class UniversityController extends ApiController {
         promises.push(db.University.findAll({ where: payload }))
       }
       if (explicitIds && explicitIds.length > 0) {
-        promises.push(db.University.findAll({ where: explicitIds }))
+        promises.push(db.University.findAll({
+          where: {
+            id: explicitIds
+          }
+        }))
       }
       if (!explicitIds && !params.name) {
         promises.push(db.University.findAll())
