@@ -45,19 +45,40 @@ class RsoController extends ApiController {
         'universityId'
       ], req.params),
       helpers.requireParams([
-        'name'
+        'name',
+        'userId'
       ], req.body, true)
     )
 
-    // Only search for `active` RSOs
-    let payload = _.merge({
-      inactiveAt: null
-    }, params)
-    db.Rso.findAll({
-      where: payload
-    }).then((rsos) => {
-      res.json(rsos)
-    })
+    let execute = (explicitIds) => {
+      // Only search for `active` RSOs
+      let payload = _.merge({
+        inactiveAt: null
+      }, params)
+
+      if (explicitIds) {
+        payload.id = explicitIds
+      }
+
+      db.Rso.findAll({
+        where: payload
+      }).then((rsos) => {
+        res.json(rsos)
+      })
+    }
+
+    if (params.userId) {
+      db.Membership.findAll({
+        where: {
+          universityId: params.universityId,
+          userId: params.userId
+        }
+      }).then((membs) => {
+        execute(_.map(membs, 'rsoId'))
+      })
+    } else {
+      execute()
+    }
   }
 
   /**
