@@ -40,7 +40,7 @@ class SubscriptionController extends ApiController {
     let params = helpers.requireParams([
       'userId',
       'rsoId'
-    ], req.body, true)
+    ], req.query, true)
 
     if (!params.userId && !params.rsoId) {
       return res.json([])

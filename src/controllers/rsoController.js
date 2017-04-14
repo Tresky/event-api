@@ -47,7 +47,7 @@ class RsoController extends ApiController {
       helpers.requireParams([
         'name',
         'userId'
-      ], req.body, true)
+      ], req.query, true)
     )
 
     let execute = (explicitIds) => {

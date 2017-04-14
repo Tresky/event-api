@@ -91,7 +91,7 @@ class EventController extends ApiController {
         'category',
         'createdById',
         'rsoId'
-      ], req.body, true),
+      ], req.query, true),
       helpers.requireParams([
         'universityId'
       ], req.params)
