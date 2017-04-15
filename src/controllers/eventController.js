@@ -95,7 +95,8 @@ class EventController extends ApiController {
         'universityId'
       ], req.params)
     )
-
+    params.rsoId = parseInt(params.rsoId)
+    params.universityId = parseInt(params.universityId)
     let allowedPrivacy = eventPrivacyLevels.PUBLIC
     getAllowedPrivacy(params.universityId, req.user.id, params.rsoId || undefined)
       .then((privacy) => {
@@ -200,7 +201,8 @@ class EventController extends ApiController {
         'endTime',
         'privacy',
         'category',
-        'rsoId'
+        'rsoId',
+        'imageUrl'
       ], req.body),
       helpers.requireParams([
         'universityId'

@@ -3,7 +3,7 @@ var moment = require('moment')
 module.exports = {
   up: function (queryInterface, Sequelize) {
     var rsos = [1, 2, 3, 4]
-    queryInterface.bulkInsert('Event', [{
+    return queryInterface.bulkInsert('Event', [{
       createdById: 5,
       name: 'Sowing 101',
       description: 'We will sow!',
@@ -14,7 +14,9 @@ module.exports = {
       privacy: 3,
       category: 'Crafts',
       rsoId: rsos[3],
-      universityId: 1
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }, {
       createdById: 3,
       name: 'Free Speech Event',
@@ -26,7 +28,9 @@ module.exports = {
       privacy: 3,
       category: 'Politics',
       rsoId: rsos[0],
-      universityId: 1
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }, {
       createdById: 3,
       name: 'Target Practice',
@@ -38,7 +42,9 @@ module.exports = {
       privacy: 3,
       category: 'Entertainment',
       rsoId: rsos[2],
-      universityId: 1
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }, {
       createdById: 3,
       name: 'Gun Safety',
@@ -50,7 +56,9 @@ module.exports = {
       privacy: 2,
       category: 'Entertainment',
       rsoId: rsos[2],
-      universityId: 1
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }, {
       createdById: 3,
       name: 'Life of Bernie!',
@@ -62,7 +70,9 @@ module.exports = {
       privacy: 3,
       category: 'Politics',
       rsoId: rsos[1],
-      universityId: 1
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }, {
       createdById: 3,
       name: 'Cross Stitching for n00bs',
@@ -73,8 +83,10 @@ module.exports = {
       endTime: moment().add(4, 'days').format(),
       privacy: 2,
       category: 'Politics',
-      rsoId: rsos[0],
-      universityId: 1
+      rsoId: rsos[3],
+      universityId: 1,
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
     }])
   },
 
