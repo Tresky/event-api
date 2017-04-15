@@ -28,6 +28,7 @@ module.exports = (db, DataTypes) => {
     },
     latitude: DataTypes.DOUBLE,
     longitude: DataTypes.DOUBLE,
+    imageUrl: DataTypes.STRING,
     startTime: {
       type: DataTypes.DATE,
       allowNull: false
