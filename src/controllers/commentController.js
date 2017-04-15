@@ -48,6 +48,8 @@ class CommentController extends ApiController {
     db.Comment.findAll({
       where: payload
     }).then((comments) => {
+      comments = comments.toJSON()
+
       let userIds = _.map(comments, 'createdById')
       db.User.findAll({
         where: {
