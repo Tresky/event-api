@@ -5,7 +5,6 @@ let db = require('../db')
 let helpers = require('../lib/controllerHelpers')
 
 let ApiController = require('./apiController')
-
 let ApiError = require('../lib/apiErrors')
 
 class CommentController extends ApiController {
@@ -54,18 +53,10 @@ class CommentController extends ApiController {
           id: userIds
         }
       }).then((users) => {
-        console.log('COMMENTS', comments)
-        console.log('USERS', userIds, _.map(users, 'id'))
         _.each(comments, (comm) => {
           comm = comm.toJSON()
           comm.user = _.find(users, { id: comm.createdById })
         })
-
-        console.log('COMMENTS', comments)
-        // let result = _.map(comments, (comm) => {
-        //   comm.user = _.find(users, { id: comm.createdById })
-        //   return comm
-        // })
         res.json(comments)
       })
     })

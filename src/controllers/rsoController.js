@@ -46,7 +46,8 @@ class RsoController extends ApiController {
       ], req.params),
       helpers.requireParams([
         'name',
-        'userId'
+        'userId',
+        'isAdmin'
       ], req.query, true)
     )
 
@@ -68,11 +69,16 @@ class RsoController extends ApiController {
     }
 
     if (params.userId) {
+      let pl = {
+        universityId: params.universityId,
+        userId: params.userId
+      }
+
+      if (params.isAdmin) {
+        params.permissionLevel = permLevels.ADMIN
+      }
       db.Membership.findAll({
-        where: {
-          universityId: params.universityId,
-          userId: params.userId
-        }
+        where: pl
       }).then((membs) => {
         execute(_.map(membs, 'rsoId'))
       })
