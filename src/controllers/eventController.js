@@ -192,6 +192,8 @@ class EventController extends ApiController {
       helpers.requireParams([
         'name',
         'description',
+        'longitude',
+        'latitude',
         'startTime',
         'endTime',
         'privacy',
@@ -277,6 +279,8 @@ class EventController extends ApiController {
       helpers.requireParams([
         'name',
         'description',
+        'longitude',
+        'latitude',
         'startTime',
         'endTime',
         'privacy',

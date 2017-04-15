@@ -128,7 +128,9 @@ class UniversityController extends ApiController {
     // Get the required parameters
     let params = _.merge(
       helpers.requireParams([
-        'description'
+        'description',
+        'latitude',
+        'longitude'
       ], req.body, true),
       helpers.requireParams([
         'id'

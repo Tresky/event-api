@@ -111,7 +111,9 @@ class LoginController extends ApiController {
       // Need to create a university only if the user is meant to
       // be a SUPERADMIN
       let uniParams = helpers.requireParams([
-        'universityName'
+        'universityName',
+        'latitude',
+        'longitude'
       ], req.body)
 
       if (req.body.description) {
