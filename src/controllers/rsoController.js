@@ -20,6 +20,8 @@ class RsoController extends ApiController {
    *
    * @apiParam (URL Params) {Integer} universityId Id of the university to select within
    * @apiParam (Body Params) {String} [name] Name of the university to fetch
+   * @apiParam (Body Params) {Integer} [userId] Id of the user to query RSO's of
+   * @apiParam (Body Params) {Boolean} [isAdmin] Add this as true if you want only the Rso's the user is an admin of
    *
    * @apiSuccessExample {json} Success-Response:
    *   HTTP/1.1 200 OK

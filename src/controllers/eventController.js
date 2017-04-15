@@ -5,7 +5,6 @@ let db = require('../db')
 let helpers = require('../lib/controllerHelpers')
 
 let ApiController = require('./apiController')
-
 let ApiError = require('../lib/apiErrors')
 
 import eventPrivacyLevels from '../lib/eventPrivacyLevels'
@@ -104,9 +103,11 @@ class EventController extends ApiController {
         let payload = _.merge({
           inactiveAt: null
         }, params)
+        console.log('PAYLOAD', payload, allowedPrivacy)
         db.Event.findAll({
           where: payload
         }).then((events) => {
+          console.log('BEFORE', events)
           res.json(_.filter(events, (evt) => {
             return evt.privacy >= allowedPrivacy
           }))
@@ -170,6 +171,7 @@ class EventController extends ApiController {
    * @apiParam (Body Params) {Date} startTime Time that the event starts
    * @apiParam (Body Params) {Date} endTime Time that the event ends
    * @apiParam (Body Params) {Integer} privacy Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {String} imageUrl Url to the image of the event
    * @apiParam (Body Params) {String} [contactPhone] Phone number to call for info
    * @apiParam (Body Params) {String} [contactEmail] Email to message for info
    *
