@@ -4,7 +4,7 @@ module.exports = {
   up: function (queryInterface, Sequelize) {
     return new Promise(function (resolve, reject) {
       queryInterface.findAll('Rso')
-        .then((rsos) => {
+        .then(function (rsos) {
           queryInterface.bulkInsert('Event', [{
             createdById: 5,
             name: 'Sowing 101',
