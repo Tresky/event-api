@@ -291,6 +291,7 @@ class EventController extends ApiController {
         'endTime',
         'privacy',
         'category',
+        'rating',
         'contactPhone',
         'contactEmail'
       ], req.body, true)

@@ -41,6 +41,7 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    rating: DataTypes.FLOAT,
     category: {
       type: DataTypes.STRING,
       allowNull: false
