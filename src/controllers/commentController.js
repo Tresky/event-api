@@ -122,13 +122,14 @@ class CommentController extends ApiController {
         'message'
       ], req.body),
       helpers.requireParams([
-        'eventId'
+        'eventId',
+        'universityId'
       ], req.params)
     )
 
     // Make sure the authenticated user has permission
     // to create an event in this RSO.
-    if (!req.permissions.userCan('comment.create', 'rso', params.rsoId)) {
+    if (!req.permissions.userCan('comment.create', 'university', params.universityId)) {
       return next(new ApiError.InvalidPermissionForAction({ action: 'comment.create', userId: req.user.id }))
     }
 
