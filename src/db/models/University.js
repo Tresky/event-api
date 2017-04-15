@@ -61,6 +61,7 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    imageUrl: DataTypes.STRING,
     latitude: DataTypes.DOUBLE,
     longitude: DataTypes.DOUBLE,
     inactiveAt: {

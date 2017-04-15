@@ -7,6 +7,8 @@ module.exports = {
         name: 'University of Tyler',
         description: 'The best university in the world!',
         imageUrl: 'http://www.rice.edu/_images/feature-why-rice.jpg',
+        latitude: 28.6024,
+        longitude: -81.2001,
         createdAt: 'NOW()',
         updatedAt: 'NOW()'
       }], { returning: true }).then(function (uni) {
