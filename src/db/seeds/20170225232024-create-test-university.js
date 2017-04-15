@@ -6,6 +6,7 @@ module.exports = {
       queryInterface.bulkInsert('University', [{
         name: 'University of Tyler',
         description: 'The best university in the world!',
+        imageUrl: 'http://www.rice.edu/_images/feature-why-rice.jpg',
         createdAt: 'NOW()',
         updatedAt: 'NOW()'
       }], { returning: true }).then(function (uni) {
