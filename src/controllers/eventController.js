@@ -250,6 +250,8 @@ class EventController extends ApiController {
    * @apiParam (URL Params) {Integer} id Id of the Event to update
    * @apiParam (Body Params) {String} [name] Name of the event
    * @apiParam (Body Params) {String} [description] Description of the event
+   * @apiParam (Body Params) {String} [latitude] Latitude of the location of the university
+   * @apiParam (Body Params) {String} [longitude] Longitude of the location of the university
    * @apiParam (Body Params) {Date} [startTime] Time that the event starts
    * @apiParam (Body Params) {Date} [endTime] Time that the event ends
    * @apiParam (Body Params) {Integer} [privacy] Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3

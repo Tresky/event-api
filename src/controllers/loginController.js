@@ -66,6 +66,8 @@ class LoginController extends ApiController {
    * @apiParam {Integer} permissionLevel Permission level to sign the user up with (STUDENT or SUPERADMIN; must be SUPERADMIN to create University)
    * @apiParam {Integer} [universityId] Id of the University to add them to; null if creating a new University (optional)
    * @apiParam {String} [universityName] Name of the new University to create (optional)
+   * @apiParam {String} [latitude] Latitude of the location of the university
+   * @apiParam {String} [longitude] Longitude of the location of the university
    * @apiParam {String} [description] Description of the new University to create (optional)
    */
   postSignup (req, res, next) {

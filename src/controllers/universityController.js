@@ -110,6 +110,8 @@ class UniversityController extends ApiController {
    *
    * @apiParam (URL Params) {Integer} id Id of the University record to fetch
    * @apiParam (Body Params) {String} [description] New description of the University
+   * @apiParam (Body Params) {String} [latitude] Latitude of the location of the university
+   * @apiParam (Body Params) {String} [longitude] Longitude of the location of the university
    *
    * @apiSuccessExample {json} Success-Response:
    *   HTTP/1.1 200 OK
