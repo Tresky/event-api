@@ -48,7 +48,17 @@ class CommentController extends ApiController {
     db.Comment.findAll({
       where: payload
     }).then((comments) => {
-      res.json(comments)
+      let userIds = _.map(comments, 'createdById')
+      db.User.findAll({
+        where: {
+          id: userIds
+        }
+      }).then((users) => {
+        let result = _.map(comments, (comm) => {
+          comm.user = _.find(users, { id: comm.createdById })
+        })
+        res.json(result)
+      })
     })
   }
 
