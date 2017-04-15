@@ -54,11 +54,15 @@ class CommentController extends ApiController {
           id: userIds
         }
       }).then((users) => {
-        let result = _.map(comments, (comm) => {
+        _.each(comments, (comm) => {
           comm.user = _.find(users, { id: comm.createdById })
-          return comm
         })
-        res.json(result)
+
+        // let result = _.map(comments, (comm) => {
+        //   comm.user = _.find(users, { id: comm.createdById })
+        //   return comm
+        // })
+        res.json(comments)
       })
     })
   }
