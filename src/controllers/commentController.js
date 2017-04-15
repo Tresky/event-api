@@ -54,6 +54,8 @@ class CommentController extends ApiController {
           id: userIds
         }
       }).then((users) => {
+        console.log('COMMENTS', comments)
+        console.log('USERS', userIds, _.map(users, 'id'))
         _.each(comments, (comm) => {
           comm.user = _.find(users, { id: comm.createdById })
         })
