@@ -283,6 +283,9 @@ class EventController extends ApiController {
         'id'
       ], req.params),
       helpers.requireParams([
+        'rsoId'
+      ], req.body)
+      helpers.requireParams([
         'name',
         'description',
         'longitude',
@@ -299,7 +302,12 @@ class EventController extends ApiController {
 
     if (!req.permissions.userCan('event.update', 'rso', params.rsoId)) {
       if (params.rating) {
-        params = { rating: params.rating }
+        params = {
+          id: params.id,
+          universityId: params.universityId,
+          rsoId: params.rsoId,
+          rating: params.rating
+        }
       } else {
         return next(new ApiError.InvalidPermissionForAction({ action: 'events.update', params: params }))
       }
