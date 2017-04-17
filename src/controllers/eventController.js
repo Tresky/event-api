@@ -284,7 +284,7 @@ class EventController extends ApiController {
       ], req.params),
       helpers.requireParams([
         'rsoId'
-      ], req.body)
+      ], req.body),
       helpers.requireParams([
         'name',
         'description',
