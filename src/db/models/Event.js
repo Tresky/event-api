@@ -26,6 +26,9 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    latitude: DataTypes.DOUBLE,
+    longitude: DataTypes.DOUBLE,
+    imageUrl: DataTypes.STRING,
     startTime: {
       type: DataTypes.DATE,
       allowNull: false
@@ -38,6 +41,7 @@ module.exports = (db, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    rating: DataTypes.FLOAT,
     category: {
       type: DataTypes.STRING,
       allowNull: false

@@ -1,6 +1,6 @@
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.createTable('Comments', {
+    return queryInterface.createTable('Comment', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,

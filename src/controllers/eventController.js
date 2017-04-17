@@ -5,7 +5,6 @@ let db = require('../db')
 let helpers = require('../lib/controllerHelpers')
 
 let ApiController = require('./apiController')
-
 let ApiError = require('../lib/apiErrors')
 
 import eventPrivacyLevels from '../lib/eventPrivacyLevels'
@@ -91,12 +90,13 @@ class EventController extends ApiController {
         'category',
         'createdById',
         'rsoId'
-      ], req.body, true),
+      ], req.query, true),
       helpers.requireParams([
         'universityId'
       ], req.params)
     )
-
+    params.rsoId = parseInt(params.rsoId)
+    params.universityId = parseInt(params.universityId)
     let allowedPrivacy = eventPrivacyLevels.PUBLIC
     getAllowedPrivacy(params.universityId, req.user.id, params.rsoId || undefined)
       .then((privacy) => {
@@ -104,9 +104,11 @@ class EventController extends ApiController {
         let payload = _.merge({
           inactiveAt: null
         }, params)
+        console.log('PAYLOAD', payload, allowedPrivacy)
         db.Event.findAll({
           where: payload
         }).then((events) => {
+          console.log('BEFORE', events)
           res.json(_.filter(events, (evt) => {
             return evt.privacy >= allowedPrivacy
           }))
@@ -170,6 +172,7 @@ class EventController extends ApiController {
    * @apiParam (Body Params) {Date} startTime Time that the event starts
    * @apiParam (Body Params) {Date} endTime Time that the event ends
    * @apiParam (Body Params) {Integer} privacy Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
+   * @apiParam (Body Params) {String} imageUrl Url to the image of the event
    * @apiParam (Body Params) {String} [contactPhone] Phone number to call for info
    * @apiParam (Body Params) {String} [contactEmail] Email to message for info
    *
@@ -192,11 +195,14 @@ class EventController extends ApiController {
       helpers.requireParams([
         'name',
         'description',
+        'longitude',
+        'latitude',
         'startTime',
         'endTime',
         'privacy',
         'category',
-        'rsoId'
+        'rsoId',
+        'imageUrl'
       ], req.body),
       helpers.requireParams([
         'universityId'
@@ -248,6 +254,8 @@ class EventController extends ApiController {
    * @apiParam (URL Params) {Integer} id Id of the Event to update
    * @apiParam (Body Params) {String} [name] Name of the event
    * @apiParam (Body Params) {String} [description] Description of the event
+   * @apiParam (Body Params) {String} [latitude] Latitude of the location of the university
+   * @apiParam (Body Params) {String} [longitude] Longitude of the location of the university
    * @apiParam (Body Params) {Date} [startTime] Time that the event starts
    * @apiParam (Body Params) {Date} [endTime] Time that the event ends
    * @apiParam (Body Params) {Integer} [privacy] Privacy level of the event: RSO=1 - PRIVATE=2 - PUBLIC=3
@@ -277,10 +285,13 @@ class EventController extends ApiController {
       helpers.requireParams([
         'name',
         'description',
+        'longitude',
+        'latitude',
         'startTime',
         'endTime',
         'privacy',
         'category',
+        'rating',
         'contactPhone',
         'contactEmail'
       ], req.body, true)

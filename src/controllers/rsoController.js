@@ -20,6 +20,8 @@ class RsoController extends ApiController {
    *
    * @apiParam (URL Params) {Integer} universityId Id of the university to select within
    * @apiParam (Body Params) {String} [name] Name of the university to fetch
+   * @apiParam (Body Params) {Integer} [userId] Id of the user to query RSO's of
+   * @apiParam (Body Params) {Boolean} [isAdmin] Add this as true if you want only the Rso's the user is an admin of
    *
    * @apiSuccessExample {json} Success-Response:
    *   HTTP/1.1 200 OK
@@ -45,19 +47,46 @@ class RsoController extends ApiController {
         'universityId'
       ], req.params),
       helpers.requireParams([
-        'name'
-      ], req.body, true)
+        'name',
+        'userId',
+        'isAdmin'
+      ], req.query, true)
     )
 
-    // Only search for `active` RSOs
-    let payload = _.merge({
-      inactiveAt: null
-    }, params)
-    db.Rso.findAll({
-      where: payload
-    }).then((rsos) => {
-      res.json(rsos)
-    })
+    let execute = (explicitIds) => {
+      // Only search for `active` RSOs
+      let payload = _.merge({
+        inactiveAt: null
+      }, params)
+
+      if (explicitIds) {
+        payload.id = explicitIds
+      }
+
+      db.Rso.findAll({
+        where: payload
+      }).then((rsos) => {
+        res.json(rsos)
+      })
+    }
+
+    if (params.userId) {
+      let pl = {
+        universityId: params.universityId,
+        userId: params.userId
+      }
+
+      if (params.isAdmin) {
+        params.permissionLevel = permLevels.ADMIN
+      }
+      db.Membership.findAll({
+        where: pl
+      }).then((membs) => {
+        execute(_.map(membs, 'rsoId'))
+      })
+    } else {
+      execute()
+    }
   }
 
   /**

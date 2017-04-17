@@ -6,6 +6,9 @@ module.exports = {
       queryInterface.bulkInsert('University', [{
         name: 'University of Tyler',
         description: 'The best university in the world!',
+        imageUrl: 'http://www.rice.edu/_images/feature-why-rice.jpg',
+        latitude: 28.6024,
+        longitude: -81.2001,
         createdAt: 'NOW()',
         updatedAt: 'NOW()'
       }], { returning: true }).then(function (uni) {
@@ -40,7 +43,34 @@ module.exports = {
             }, {
               firstName: 'Kara',
               lastName: 'Singletary',
-              email: 'student@test.com',
+              email: 'student0@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null,
+              createdAt: 'NOW()',
+              updatedAt: 'NOW()'
+            }, {
+              firstName: 'Ethan',
+              lastName: 'Klein',
+              email: 'student1@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null,
+              createdAt: 'NOW()',
+              updatedAt: 'NOW()'
+            }, {
+              firstName: 'Hugh',
+              lastName: 'Mungus',
+              email: 'student2@test.com',
+              password: hash,
+              inactiveAt: null,
+              inactiveById: null,
+              createdAt: 'NOW()',
+              updatedAt: 'NOW()'
+            }, {
+              firstName: 'Hila',
+              lastName: 'Klein',
+              email: 'student3@test.com',
               password: hash,
               inactiveAt: null,
               inactiveById: null,
@@ -49,29 +79,29 @@ module.exports = {
             }], { returning: true }).then(function (user) {
               return queryInterface.bulkInsert('Rso', [{
                 createdById: user[0].id,
-                name: 'TestRso0',
-                description: 'My description',
+                name: 'College Republicans',
+                description: 'We are Republicans.',
                 universityId: uni.id,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
               }, {
                 createdById: user[0].id,
-                name: 'TestRso1',
-                description: 'My description',
+                name: 'College Democrats',
+                description: 'We are Democrats.',
                 universityId: uni.id,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
               }, {
                 createdById: user[0].id,
-                name: 'TestRso2',
-                description: 'My description',
+                name: 'Gun Club',
+                description: 'We like guns.',
                 universityId: uni.id,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
               }, {
                 createdById: user[0].id,
-                name: 'TestRso3',
-                description: 'My description',
+                name: 'Sowing Club',
+                description: 'We like sowing.',
                 universityId: uni.id,
                 createdAt: 'NOW()',
                 updatedAt: 'NOW()'
@@ -94,6 +124,30 @@ module.exports = {
                   updatedAt: 'NOW()'
                 }, {
                   userId: user[2].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[3].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[4].id,
+                  rsoId: null,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[5].id,
                   rsoId: null,
                   universityId: uni.id,
                   permissionLevel: 3,
@@ -143,6 +197,46 @@ module.exports = {
                 }, {
                   userId: user[1].id,
                   rsoId: rsos[3].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[3].id,
+                  rsoId: rsos[0].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[4].id,
+                  rsoId: rsos[2].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[5].id,
+                  rsoId: rsos[3].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[3].id,
+                  rsoId: rsos[2].id,
+                  universityId: uni.id,
+                  permissionLevel: 3,
+                  inactiveAt: null,
+                  createdAt: 'NOW()',
+                  updatedAt: 'NOW()'
+                }, {
+                  userId: user[5].id,
+                  rsoId: rsos[1].id,
                   universityId: uni.id,
                   permissionLevel: 3,
                   inactiveAt: null,

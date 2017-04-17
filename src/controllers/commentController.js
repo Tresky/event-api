@@ -5,7 +5,6 @@ let db = require('../db')
 let helpers = require('../lib/controllerHelpers')
 
 let ApiController = require('./apiController')
-
 let ApiError = require('../lib/apiErrors')
 
 class CommentController extends ApiController {
@@ -48,7 +47,18 @@ class CommentController extends ApiController {
     db.Comment.findAll({
       where: payload
     }).then((comments) => {
-      res.json(comments)
+      let userIds = _.map(comments, 'createdById')
+      db.User.findAll({
+        where: {
+          id: userIds
+        }
+      }).then((users) => {
+        _.each(comments, (comm) => {
+          comm = comm.toJSON()
+          comm.user = _.find(users, { id: comm.createdById })
+        })
+        res.json(comments)
+      })
     })
   }
 
@@ -122,13 +132,14 @@ class CommentController extends ApiController {
         'message'
       ], req.body),
       helpers.requireParams([
-        'eventId'
+        'eventId',
+        'universityId'
       ], req.params)
     )
 
     // Make sure the authenticated user has permission
     // to create an event in this RSO.
-    if (!req.permissions.userCan('comment.create', 'rso', params.rsoId)) {
+    if (!req.permissions.userCan('comment.create', 'university', params.universityId)) {
       return next(new ApiError.InvalidPermissionForAction({ action: 'comment.create', userId: req.user.id }))
     }
 

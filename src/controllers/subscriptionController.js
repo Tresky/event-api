@@ -40,7 +40,7 @@ class SubscriptionController extends ApiController {
     let params = helpers.requireParams([
       'userId',
       'rsoId'
-    ], req.body, true)
+    ], req.query, true)
 
     if (!params.userId && !params.rsoId) {
       return res.json([])
@@ -87,7 +87,8 @@ class SubscriptionController extends ApiController {
     db.Subscription.count({
       where: {
         rsoId: params.rsoId,
-        userId: req.user.id
+        userId: req.user.id,
+        inactiveAt: null
       }
     }).then((count) => {
       if (count > 0) {

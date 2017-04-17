@@ -35,6 +35,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      rating: Sequelize.FLOAT,
       contactPhone: Sequelize.STRING,
       contactEmail: Sequelize.STRING,
       rsoId: {
