@@ -298,7 +298,11 @@ class EventController extends ApiController {
     )
 
     if (!req.permissions.userCan('event.update', 'rso', params.rsoId)) {
-      return next(new ApiError.InvalidPermissionForAction({ action: 'events.update', params: params }))
+      if (params.rating) {
+        params = { rating: params.rating }
+      } else {
+        return next(new ApiError.InvalidPermissionForAction({ action: 'events.update', params: params }))
+      }
     }
 
     db.Event.findOne({
